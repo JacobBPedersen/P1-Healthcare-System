@@ -2,6 +2,5 @@
 #define P1_HEALTHCARE_SYSTEM_FUNCTIONS_H
 #include <stdio.h>
 
-void print_func();
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H
