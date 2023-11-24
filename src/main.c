@@ -2,6 +2,9 @@
 
 
 int main () {
-    print_func();
+
+
+    create_referral()
+
     return 0;
 }
