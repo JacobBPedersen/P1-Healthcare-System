@@ -150,8 +150,6 @@ void create_referral(patient chosen_patient) {
             new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
             new_referral.ref_purpose, new_referral.language_barrier, new_referral.language);
 
-
-
 }
 
 void print_referral(referral new_referral){

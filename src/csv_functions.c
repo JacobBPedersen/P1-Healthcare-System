@@ -3,13 +3,12 @@
 
 char *search_cpr(char *cpr, FILE *file)
 {
-    char buffer[50];
+    char buffer[150];
 
-    char *return_buffer = malloc(50 * sizeof(char));
+    char *return_buffer = malloc(150 * sizeof(char));
     char *token;
 
     int found = 0;
-    int column = 0;
 
     while (fgets(buffer, sizeof(buffer), file) != NULL)
     {
@@ -28,7 +27,6 @@ char *search_cpr(char *cpr, FILE *file)
         {
 
             found = 1;
-            break;
         }
 
         token = strtok(NULL, ",");
