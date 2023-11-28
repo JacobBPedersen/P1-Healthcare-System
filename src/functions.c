@@ -72,28 +72,44 @@ void user_cred() {
     //printf("Please enter password:\n>");
     //scanf(" %s",password);
 
-
     // evt. return  GP?
+
+    //skal hvis gp returne info om den praktiserende læge så den kan vedgå i henvisningen.
 }
 
-void search_patient() {
+patient search_patient(FILE *fp) {
     //searches the register through CPR
 
     char cpr [CPR_LENGTH];
     printf("Enter CPR of the patient");
     scanf(" %s", cpr);
 
+    //Use search function to find cpr, if not found call ask if patient is to be created.
+    char *info = search_cpr(cpr, fp);
+
+    if (strcmp(info, "value not found") == 0) {
+        //create_patient();
+        exit(EXIT_FAILURE);
+    } else {
+        patient f_patient;
+        sscanf(info, "%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s", f_patient.CPR, f_patient.name, &f_patient.age,
+               &f_patient.sex, f_patient.phone_num, f_patient.address.zip_code, f_patient.address.city,
+               f_patient.address.street_name, f_patient.address.house_number_etc,
+               f_patient.relative.name, f_patient.relative.phone_num, f_patient.relative.email);
+
+        return f_patient;
+    }
+
 
 }
+
+
 
 void create_referral(patient chosen_patient) {
     //checks if the patient is already registered.
     //if not, a patient is created from scratch with create_patient
     //otherwise only asks for variable data in update_patient
     //saves patient data in the database
-
-
-
 
     referral new_referral;
 
@@ -146,7 +162,7 @@ void create_referral(patient chosen_patient) {
     }
 
     fprintf(referrals, "\n%s,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s",
-            chosen_patient.CPR, new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_desc,
+            new_referral.patient.CPR, new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_desc,
             new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
             new_referral.ref_purpose, new_referral.language_barrier, new_referral.language);
 
@@ -227,7 +243,6 @@ patient create_patient() {
     //return patient hvis der skal oprettes en referral, ellers ikke
     return new_patient;
 }
-
 
 
 void review_referral() {
