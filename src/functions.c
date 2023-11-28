@@ -21,6 +21,7 @@ typedef struct GP {
 
 } GP;
 
+
 typedef struct relative {
     char name[DETAILS_LENGTH];
     char phone_num[PHONE_NUM];
