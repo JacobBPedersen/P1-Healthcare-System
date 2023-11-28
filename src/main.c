@@ -4,22 +4,18 @@ int main()
 {
     // create_referral()
 
-
     FILE *patients_file = fopen("patient_register.csv", "r");
 
-    if(patients_file == NULL){
+    if (patients_file == NULL)
+    {
 
         printf("Error");
+        return 0;
     }
 
+    char *test = search_cpr("333333-3333", patients_file);
 
-
-
-
-
-    //char *test = search_cpr("333333-3333", patients_file);
-
-    //printf("%s", test);
+    printf("%s", test);
 
     return 0;
 }
