@@ -83,8 +83,8 @@ patient search_patient(FILE *fp)
 {
     // searches the register through CPR
     char cpr[CPR_LENGTH];
-    printf("Enter CPR of the patient");
-    scanf(" %s", cpr);
+    printf("Enter CPR of the patient\n> ");
+    scanf("%s", cpr);
 
     // Use search function to find cpr, if not found call ask if patient is to be created.
     char *searched_patient = search_cpr(cpr, fp);
@@ -94,10 +94,11 @@ patient search_patient(FILE *fp)
         /**
          * CREATE NEW PATIENT
          */
+        // patient created_patient = create_patient();
+        patient create_new;
 
-        patient new_patient;
-
-        return new_patient;
+        // return created_patient;
+        return create_new;
     }
 
     patient f_patient;
@@ -107,7 +108,7 @@ patient search_patient(FILE *fp)
            f_patient.address.street_name, f_patient.address.house_number_etc,
            f_patient.relative.name, f_patient.relative.phone_num, f_patient.relative.email);
 
-
+    printf("%s", f_patient.name);
     return f_patient;
 }
 

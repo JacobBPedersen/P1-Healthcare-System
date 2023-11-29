@@ -8,12 +8,11 @@ int main()
 
     if (patients_file == NULL)
     {
-
         printf("Error");
         return 0;
     }
 
-    char *test = search_cpr("333333-3333", patients_file);
+    char *test = search_patient()
 
     printf("%s", test);
 

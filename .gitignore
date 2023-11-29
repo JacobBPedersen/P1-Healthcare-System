@@ -52,5 +52,5 @@ Mkfile.old
 dkms.conf
 .vscode
 .idea
-/brandon
+/src/brandon
 cmake-build*
