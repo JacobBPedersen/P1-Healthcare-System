@@ -6,7 +6,7 @@
 
 
 #define DETAILS_LENGTH 40
-#define PHONE_NUM 12
+#define PHONE_NUM 13
 #define CPR_LENGTH 12
 
 typedef struct address {
@@ -19,10 +19,19 @@ typedef struct address {
 typedef struct GP {
     char id[DETAILS_LENGTH];
     char name [DETAILS_LENGTH];
-    char title [10];
-    char clinic [10];
+    char title [DETAILS_LENGTH];
+    char clinic [DETAILS_LENGTH];
     char phone_num [PHONE_NUM];
 } GP;
+
+typedef struct hosp_person {
+    char id[DETAILS_LENGTH];
+    char name [DETAILS_LENGTH];
+    char title [DETAILS_LENGTH];
+    char location [DETAILS_LENGTH];
+    char department [DETAILS_LENGTH];
+    char phone_num [PHONE_NUM];
+} hosp_person;
 
 typedef struct relative {
     char name[DETAILS_LENGTH];
@@ -62,7 +71,11 @@ typedef struct referral {
 
 char *search_cpr(char *cpr, FILE *file);
 
-GP user_cred();
+GP GP_user();
+
+hosp_person hosp_user ();
+
+void user_cred(int* GP_or_Hosp);
 
 patient search_patient(FILE *fp);
 
@@ -74,6 +87,10 @@ patient create_patient();
 
 void review_referral();
 
+void print_test_personnel_gp (GP user); // test
 
+void print_test_personnel_hosp (hosp_person user);
+
+void clear_buffer();
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H

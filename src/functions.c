@@ -1,19 +1,32 @@
 #include "functions.h"
 
 
-GP user_cred() {
+void user_cred(int* GP_or_Hosp) {
     //Takes input as to who is using the program, and what it is supposed to do at the moment
+    int invalid_input;
+    do {
+        invalid_input = 0;
+        printf("Please enter if GP:\n>");
+        scanf(" %d", GP_or_Hosp);
+        clear_buffer();
+        if (*GP_or_Hosp != 0 && *GP_or_Hosp != 1) {
+            printf("Please enter a valid input\n");
+            invalid_input = 1;
+        }
 
-    int GP_or_Hosp;
-    printf("Please enter if GP");
-    scanf(" %d", &GP_or_Hosp);
+    } while (invalid_input == 1);
 
-    char id[DETAILS_LENGTH];
-    printf("Please enter id:\n>");
-    scanf(" %s", id);
+}
 
 
-    if (GP_or_Hosp == 1) {
+GP GP_user(){
+
+    do {
+        char id[DETAILS_LENGTH];
+
+        printf("Please enter id:\n>");
+        scanf(" %s", id);
+
         FILE *fp_gp = fopen("GP_usernames.csv", "r");
 
         if (fp_gp == NULL) {
@@ -21,23 +34,30 @@ GP user_cred() {
             exit(EXIT_FAILURE);
         }
 
-        char* GP_info = search_cpr(id, fp_gp);
+        char *GP_info = search_cpr(id, fp_gp);
+        fclose(fp_gp);
 
-        if (strcmp(GP_info, "value not found") == 0) {
-            exit(EXIT_FAILURE);
+        if (strcmp(GP_info, "Value not found") == 0) {
+            printf("\nError user not found.\n");
         } else {
             GP current_gp;
-            sscanf(GP_info, "%s,%s,%s,%s,%s", current_gp.id, current_gp.name, current_gp.title,
+            sscanf(GP_info, "%[^,],%[^,],%[^,],%[^,],%[^,]", current_gp.id, current_gp.name, current_gp.title,
                    current_gp.clinic, current_gp.phone_num);
-
             return current_gp;
         }
+    } while (1);
 
+}
 
-    }
+hosp_person hosp_user (){
 
+    do {
 
-    if (GP_or_Hosp == 0) {
+        char id[DETAILS_LENGTH];
+
+        printf("Please enter id:\n>");
+        scanf(" %s", id);
+
         FILE *fp_hosp = fopen("hospital_usernames.csv", "r");
 
         if (fp_hosp == NULL) {
@@ -45,33 +65,22 @@ GP user_cred() {
             exit(EXIT_FAILURE);
         }
 
-        char* hosp_info = search_cpr(id, fp_hosp);
+        char *hosp_info = search_cpr(id, fp_hosp);
+        fclose(fp_hosp);
 
-        if (strcmp(hosp_info, "value not found") == 0) {
-            exit(EXIT_FAILURE);
+        if (strcmp(hosp_info, "Value not found") == 0) {
+            printf("\nError user not found.\n");
         } else {
-            GP current_gp;
-            sscanf(hosp_info, "%s,%s,%s,%s,%s", current_gp.id, current_gp.name, current_gp.title,
-                   current_gp.clinic, current_gp.phone_num);
-
-            return current_gp;
+            hosp_person current_hosp;
+            sscanf(hosp_info, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", current_hosp.id, current_hosp.name,
+                   current_hosp.title, current_hosp.location, current_hosp.department, current_hosp.phone_num);
+            return current_hosp;
         }
 
+    } while (1);
 
-
-    }
-
-
-
-
-
-    //printf("Please enter password:\n>");
-    //scanf(" %s",password);
-
-    // evt. return  GP?
-
-    //skal hvis gp returne info om den praktiserende læge så den kan vedgå i henvisningen.
 }
+
 
 patient search_patient(FILE *fp) {
     //searches the register through CPR
@@ -246,4 +255,28 @@ void review_referral() {
     //option to see current time schedule
     //access specific referrals for review
     //create time in an available time slot
+}
+
+
+void print_test_personnel_gp (struct GP user) {
+
+    printf("%s, %s, %s, %s, %s", user.id, user.name, user.title, user.clinic, user.phone_num);
+
+}
+
+void print_test_personnel_hosp (struct hosp_person user) {
+
+    printf("%s, %s, %s, %s, %s, %s", user.id, user.name, user.title, user.location, user.department, user.phone_num);
+
+}
+
+
+void clear_buffer () {
+
+    int ch;
+    //This is a loop that continuously calls the getchar() function, which reads the next character from the input buffer.
+    // The loop continues until it encounters a newline character '\n' or the end-of-file (EOF) indicator
+    // (which would mean there's no more input to read).
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
 }
