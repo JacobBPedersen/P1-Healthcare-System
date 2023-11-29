@@ -80,7 +80,7 @@ void user_cred()
 }
 
 /**
- * @brief Validates a CPR
+ * @brief Validates a CPR, in the format of xxxxxx-xxxx.
  * @param cpr A string representing a CPR number.
  * @return Returns 0 if valid, non-zero if invalid.
  */
