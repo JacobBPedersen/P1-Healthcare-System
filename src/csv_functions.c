@@ -21,7 +21,5 @@ char *search_cpr(char *first_col, FILE *file) //Kald funktion search first
         }
 
     }
-
-
-    return "Value not found";
+    return NULL;
 }
