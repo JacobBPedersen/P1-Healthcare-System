@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 
 char *search_cpr(char *cpr, FILE *file);
 void user_cred();

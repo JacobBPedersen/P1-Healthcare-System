@@ -79,37 +79,81 @@ void user_cred()
     // skal hvis gp returne info om den praktiserende læge så den kan vedgå i henvisningen.
 }
 
+/**
+ * @brief Validates a CPR
+ * @param cpr A string representing a CPR number.
+ * @return Returns 0 if valid, non-zero if invalid.
+ */
+int cprValidator(char cpr[CPR_LENGTH]){
+    regex_t regex;
+    regcomp(&regex, "^[0-9]{6}-[0-9]{4}$", REG_EXTENDED);
+    return regexec(&regex, cpr, 0, NULL, 0);
+}
+
 patient search_patient(FILE *fp)
 {
-    // searches the register through CPR
     char cpr[CPR_LENGTH];
-    printf("Enter CPR of the patient\n> ");
-    scanf("%s", cpr);
 
-    // Use search function to find cpr, if not found call ask if patient is to be created.
-    char *searched_patient = search_cpr(cpr, fp);
+    printf("Enter CPR of the patient.\n> ");
 
-    if (searched_patient == NULL)
-    {
-        /**
-         * CREATE NEW PATIENT
-         */
-        // patient created_patient = create_patient();
-        patient create_new;
+    // While loop for inserting and validating cpr number
+    while(1){
+        scanf("%s", cpr);
 
-        // return created_patient;
-        return create_new;
+        int cpr_match = cprValidator(cpr);
+
+        if (cpr_match == 0){
+            break;
+        };
+
+        printf("Invalid format for CPR, try again.\n> ");
+
     }
 
-    patient f_patient;
+    // Searches for a valid cpr number in the file register
+    char *searched_patient = search_cpr(cpr, fp);
 
-    sscanf(searched_patient, "%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s", f_patient.CPR, f_patient.name, &f_patient.age,
-           &f_patient.sex, f_patient.phone_num, f_patient.address.zip_code, f_patient.address.city,
-           f_patient.address.street_name, f_patient.address.house_number_etc,
-           f_patient.relative.name, f_patient.relative.phone_num, f_patient.relative.email);
+    // If patients doest exist, create on
+    if (searched_patient == NULL)
+    {
 
-    printf("%s", f_patient.name);
-    return f_patient;
+        char user_choice;
+
+        printf("Patient not found, would you like to create patient? Y/n?\n> ");
+
+        // While loop for creating patient, and validating user input.
+        while (1){
+
+            scanf(" %c",&user_choice);
+            // clear_buffer();
+
+            // If user want to create a patient
+            if (user_choice == 'y' || user_choice == 'Y' ){
+
+                // Create patient function here
+                printf("CREATE PATIENT HERE");
+                exit(1);
+                //return create_patient();
+            }else if(user_choice == 'n') {
+                printf("EXIT PROGRAM");
+                exit(1);
+            }else{
+                printf("Invalid input - Y/n\n> ");
+            }
+        }
+    }
+
+    // if patient does exit, define
+    patient return_patient;
+
+    // parsing string output from a found/existin
+    sscanf(searched_patient, "%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]"
+            , return_patient.CPR, return_patient.name, &return_patient.age,
+           &return_patient.sex, return_patient.phone_num, return_patient.address.zip_code, return_patient.address.city,
+           return_patient.address.street_name, return_patient.address.house_number_etc,
+           return_patient.relative.name, return_patient.relative.phone_num, return_patient.relative.email);
+
+    return return_patient;
 }
 
 void create_referral(patient chosen_patient)
