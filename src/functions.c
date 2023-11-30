@@ -1,5 +1,5 @@
 #include "functions.h"
-#include <regex.h>
+//#include <regex.h>
 
 void user_cred(int* GP_or_Hosp) {
     //Takes input as to who is using the program, and what it is supposed to do at the moment
@@ -41,7 +41,7 @@ GP GP_user(){
             printf("\nError user not found.\n");
         } else {
             GP current_gp;
-            sscanf(GP_info, "%[^,],%[^,],%[^,],%[^,],%[^,]", current_gp.id, current_gp.name, current_gp.title,
+            sscanf(GP_info, "%[^,],%[^,],%[^,],%[^,],%[^\n]", current_gp.id, current_gp.name, current_gp.title,
                    current_gp.clinic, current_gp.phone_num);
             return current_gp;
         }
@@ -72,7 +72,7 @@ hosp_person hosp_user (){
             printf("\nError user not found.\n");
         } else {
             hosp_person current_hosp;
-            sscanf(hosp_info, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", current_hosp.id, current_hosp.name,
+            sscanf(hosp_info, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", current_hosp.id, current_hosp.name,
                    current_hosp.title, current_hosp.location, current_hosp.department, current_hosp.phone_num);
             return current_hosp;
         }
@@ -87,23 +87,26 @@ hosp_person hosp_user (){
  * @param cpr A string representing a CPR number.
  * @return Returns 0 if valid, non-zero if invalid.
  */
+
+/*
 int cprValidator(char cpr[CPR_LENGTH]){
     regex_t regex;
     regcomp(&regex, "^[0-9]{6}-[0-9]{4}$", REG_EXTENDED);
     return regexec(&regex, cpr, 0, NULL, 0);
 }
+*/
 
 patient search_patient(FILE *fp)
 {
     char cpr[CPR_LENGTH];
 
-    printf("Enter CPR of the patient.\n> ");
+    printf("\nEnter CPR of the patient.\n> ");
 
     // While loop for inserting and validating cpr number
     while(1){
         scanf("%s", cpr);
 
-        int cpr_match = cprValidator(cpr);
+        int cpr_match = 0;/*cprValidator(cpr);*/
 
         if (cpr_match == 0){
             break;
@@ -117,7 +120,7 @@ patient search_patient(FILE *fp)
     char *searched_patient = search_cpr(cpr, fp);
 
     // If patients doest exist, create on
-    if (searched_patient == NULL)
+    if (strcmp(searched_patient, "Value not found") == 0)
     {
 
         char user_choice;
@@ -150,8 +153,8 @@ patient search_patient(FILE *fp)
     // if patient does exit, define
     patient return_patient;
 
-    // parsing string output from a found/existin
-    sscanf(searched_patient, "%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]"
+    // parsing string output from a found/existing
+    sscanf(searched_patient, "%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]"
             , return_patient.CPR, return_patient.name, &return_patient.age,
            &return_patient.sex, return_patient.phone_num, return_patient.address.zip_code, return_patient.address.city,
            return_patient.address.street_name, return_patient.address.house_number_etc,
@@ -162,15 +165,18 @@ patient search_patient(FILE *fp)
 
 
 
-void create_referral(patient chosen_patient) {
+void create_referral(patient chosen_patient, GP current_gp) {
     //checks if the patient is already registered.
     //if not, a patient is created from scratch with create_patient
     //otherwise only asks for variable data in update_patient
     //saves patient data in the database
 
+
+
     referral new_referral;
 
     new_referral.patient = chosen_patient;
+    new_referral.GP = current_gp;
 
     //referral destination
     printf("Enter the destination of the referral:\n>");
@@ -208,27 +214,104 @@ void create_referral(patient chosen_patient) {
         printf("Enter the spoken language of the patient for the referral:\n>");
         scanf(" %[^\n]", new_referral.language);
     }
-    //General practioner
 
-    //  new_referral.GP = GP; Skal være lig med hvad man indtaster ved login
 
-    FILE *referrals = fopen("referrals.csv", "a+");
-    if (referrals == NULL) {
+    FILE *referrals_documentation = fopen("referrals.csv", "a+");
+    if (referrals_documentation == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
     }
 
-    fprintf(referrals, "\n%s,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s",
+    fprintf(referrals_documentation, "\n%s,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
             new_referral.patient.CPR, new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_desc,
             new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
-            new_referral.ref_purpose, new_referral.language_barrier, new_referral.language);
+            new_referral.ref_purpose, new_referral.language_barrier, new_referral.language, new_referral.GP.name,
+            new_referral.GP.title, new_referral.GP.clinic, new_referral.GP.phone_num);
+
+    fclose(referrals_documentation);
+
+    FILE *referrals_send = fopen("referrals_send.csv", "a+");
+    if (referrals_send == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(referrals_send, "\n%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
+            //patient
+            new_referral.patient.CPR, new_referral.patient.name, new_referral.patient.age, new_referral.patient.sex,
+            new_referral.patient.phone_num,
+            //address
+            new_referral.patient.address.zip_code, new_referral.patient.address.city,
+            new_referral.patient.address.street_name, new_referral.patient.address.house_number_etc,
+            //relative
+            new_referral.patient.relative.name, new_referral.patient.relative.phone_num, new_referral.patient.relative.email,
+            //referral info
+            new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_desc,
+            new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
+            new_referral.ref_purpose, new_referral.language_barrier, new_referral.language, new_referral.GP.name,
+            new_referral.GP.title, new_referral.GP.clinic, new_referral.GP.phone_num);
+
+    // Evt. opdel fprintf
+    fclose(referrals_send);
 
 }
 
 void print_referral(referral new_referral){
+    //CPR
+    printf("CPR of patient:%s\n", new_referral.patient.CPR);
+    //Name
+    printf("Name of patient: %s\n", new_referral.patient.name);
+    //Age - Midlertidig
+    printf("Age of patient: %d\n", new_referral.patient.age);
+    //Sex
+    printf("Sex of patient: %c\n", new_referral.patient.sex);
+    //Phone Number
+    printf("Phone number of patient: %s\n", new_referral.patient.phone_num);
+    //Address
+    printf("Zip-code of patient: %s\n", new_referral.patient.address.zip_code);
+    //Zip-code
+    printf("City of patient: %s\n", new_referral.patient.address.city);
+    //Street name
+    printf("Street name of patient: %s\n", new_referral.patient.address.street_name);
+    //House numer etc.
+    printf("Enter house number etc. of patient: %s\n", new_referral.patient.address.house_number_etc);
+    //Relatives
+    printf("Enter name of one relative of the patient: %s\n", new_referral.patient.relative.name);
+    //Relative phonenumber
+    printf("Enter phone number of one relative of the patient: %s\n", new_referral.patient.relative.phone_num);
+    //Relative email
+    printf("Enter email of one relative of the patient: %s\n", new_referral.patient.relative.email);
+    //referral destination
+    printf("Destination of the referral: %d\n", new_referral.ref_dest);
+    //Diagnosis category
+    printf("Diagnosis category of the referral: %d \n", new_referral.diagnosis_cat);
+    //Diagnosis description
+    printf("Description for the diagnosis of the referral: %s\n", new_referral.diagnosis_desc);
+    //Short anamnesis
+    printf("Short anamnesis of the referral: %s\n", new_referral.short_anamnesis);
+    //Test results
+    printf("Test results for the referral: %s\n", new_referral.results);
+    //Resistant bacteria
+    printf("Resistant bacteria: %s\n", new_referral.res_bact);
+    //Handicap
+    printf("Handicap(s) of the patient: %s\n", new_referral.handicap);
+    //Information given
+    printf("Information of the patient for the referral: %s\n", new_referral.ref_purpose);
+    //Language
 
+    // Der skal promptes med en bool før den kan gå videre
+    printf("Is a language barrier of the patient for the referral: %d\n>", new_referral.language_barrier);
+    //Language
+    if (new_referral.language_barrier == 0) {
+        new_referral.language[0] = '-';
+    } else {
+        printf("Spoken language of the patient for the referral: %s\n>", new_referral.language);
+    }
+    //General practioner
+    //  new_referral.GP = GP; Skal være lig med hvad man indtaster ved login
 
 }
+
 
 patient create_patient() {
     //Henvist til denne funktion hvis patient ikke findes.
@@ -302,11 +385,104 @@ patient create_patient() {
 }
 
 
-void review_referral() {
-    //access all referrals - sort either through prioritization or chronologically
-    //option to see current time schedule
-    //access specific referrals for review
-    //create time in an available time slot
+void review_referral(referral ref) {
+    print_referral(ref);
+    printf("Do you wish to schedule a timeslot for the patient? (y/n)\n"); //access all referrals - sort either through prioritization or chronologically
+    char choice = ' ';
+    while (1) {
+        scanf(" %c", &choice);
+        if (choice == 'y' || choice == 'n') {
+            break;
+        } else {
+            printf("Input 'y' or 'n'\n");
+        }
+    }
+    if (choice == 'n') {
+    }
+    printf("Do you wish to manually schedule a timeslot(1) or receive a recommendation(2)?\n"
+           "chose 1 for manual or 2 for recommended timeslot\n");
+    while (1) {
+        scanf(" %c", &choice);
+        if (choice == '1' || choice == '2') {
+            break;
+        } else {
+            printf("Input '1' or '2'");
+        }
+    }
+    FILE *fp = fopen("timetable.csv", "r");
+    if (fp == NULL) {
+        printf("File not accessed");
+        exit(EXIT_FAILURE);
+    }
+    char time[15][6];
+
+    int day;
+    fscanf(fp, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],"
+               "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", &day, time[0], time[1],
+           time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9], time[10], time[11],
+           time[12], time[13], time[14]);
+
+    nodelist free_timeslots = {NULL};
+    char time_slot_avaliable;
+    for (int i = 0; i < NUMBER_OF_TIMESLOTS; ++i) {
+        sscanf(time[i], "%*4[0-9]%c", &time_slot_avaliable);
+        if (time_slot_avaliable == 'a') {
+            add_node_timeslot(&free_timeslots, day, time[i]);
+        }
+    }
+    fclose(fp);
+    print_node(&free_timeslots);
+    printf("Chose time by inputting 'day' and 'timeslot'");
+    int chosen_day;
+    char chosen_timeslot[5];
+    scanf("%d %4s", &chosen_day, chosen_timeslot);
+    fp = fopen("timetable.csv", "r+");
+    if (fp == NULL) {
+        printf("File not available");
+        exit(EXIT_FAILURE);
+    }
+
+
+    char buffer[150];
+    char *token;
+    // Read the file until the word is found
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        token = strtok(buffer, ",");
+
+        if (strcmp(token, chosen_timeslot) == 0) {
+            fprintf(fp, "o");
+            break;
+        }
+
+
+        fclose(fp);
+    }
+}
+//option to see current time schedule
+//access specific referrals for review
+//create time in an available time slot
+
+
+void add_node_timeslot(nodelist* list, int day, char* time){
+    node* new_node = (node*) malloc(sizeof(node));
+    if(new_node==NULL){
+        printf("No memory - goodbye\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->next = list->head;
+    char timerange[5];
+    sscanf(time, "%4s",timerange);
+    strcpy(new_node->time, timerange);
+    new_node->day = day;
+    list->head = new_node;
+}
+
+void print_node(nodelist* list){
+    node* current = list->head;
+    while(current != NULL){
+        printf("Day %d - Time: %s\t",current->day, current->time);
+        current = current->next;
+    }
 }
 
 
@@ -332,3 +508,5 @@ void clear_buffer () {
     while ((ch = getchar()) != '\n' && ch != EOF);
 
 }
+
+

@@ -8,6 +8,7 @@
 #define DETAILS_LENGTH 40
 #define PHONE_NUM 13
 #define CPR_LENGTH 12
+#define NUMBER_OF_TIMESLOTS 15
 
 typedef struct address {
     char zip_code[5];
@@ -66,6 +67,23 @@ typedef struct referral {
     // char* preference; Evt. ikke anvendelig da de ikke selv skal prioritere.
 } referral;
 
+typedef struct node{
+    int day;
+    char time[5];
+    struct node* next;
+}node;
+
+typedef struct nodelist{
+    node* head;
+}nodelist;
+
+void add_node_timeslot(nodelist* list, int day, char* time);
+void print_node(nodelist* list);
+
+
+
+
+
 
 //Prototypes of functions:
 
@@ -79,7 +97,7 @@ void user_cred(int* GP_or_Hosp);
 
 patient search_patient(FILE *fp);
 
-void create_referral(patient chosen_patient);
+void create_referral(patient chosen_patient, GP current_gp);
 
 void print_referral(referral new_referral);
 
