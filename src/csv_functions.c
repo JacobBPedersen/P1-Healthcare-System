@@ -15,7 +15,6 @@ char *search_cpr(char *first_col, FILE *file) //Kald funktion search first
 
         if (strcmp(token, first_col) == 0)
         {
-
             fclose(file);
             return strdup(return_buffer);
         }
