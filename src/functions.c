@@ -79,17 +79,16 @@ void user_cred()
     // skal hvis gp returne info om den praktiserende læge så den kan vedgå i henvisningen.
 }
 
-/**
- * @brief Validates a CPR, in the format of xxxxxx-xxxx.
- * @param cpr A string representing a CPR number.
- * @return Returns 0 if valid, non-zero if invalid.
- */
 int cprValidator(char cpr[CPR_LENGTH]){
-    regex_t regex;
-    regcomp(&regex, "^[0-9]{6}-[0-9]{4}$", REG_EXTENDED);
-    return regexec(&regex, cpr, 0, NULL, 0);
-}
+    int digits1, digits2;
+    char extraChar = '\0';
 
+    if (sscanf(cpr, "%6d-%4d%c", &digits1, &digits2, &extraChar) == 2 && strlen(cpr) == CPR_LENGTH - 1) {
+        return 0; 
+    }
+
+    return 1; 
+}
 patient search_patient(FILE *fp)
 {
     char cpr[CPR_LENGTH];
