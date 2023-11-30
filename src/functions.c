@@ -133,6 +133,7 @@ patient search_patient(FILE *fp)
                 // Create patient function here
                 printf("CREATE PATIENT HERE");
                 exit(1);
+                
                 //return create_patient();
             }else if(user_choice == 'n') {
                 printf("EXIT PROGRAM");
