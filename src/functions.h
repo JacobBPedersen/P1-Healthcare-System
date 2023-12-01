@@ -9,6 +9,9 @@
 #define PHONE_NUM 13
 #define CPR_LENGTH 12
 #define NUMBER_OF_TIMESLOTS 15
+//Updating timetable
+#define MAX_LINE_LENGTH 150
+#define NUM_TIMES 15  // Antallet af tidspunkter i hver linje
 
 typedef struct address {
     char zip_code[5];
@@ -103,12 +106,16 @@ void print_referral(referral new_referral);
 
 patient create_patient();
 
-void review_referral();
+void review_referral(referral ref);
 
 void print_test_personnel_gp (GP user); // test
 
 void print_test_personnel_hosp (hosp_person user);
 
 void clear_buffer();
+
+int time_update (int chosen_day, char chosen_time[]);
+
+void chomp(char *s);
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H

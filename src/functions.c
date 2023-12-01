@@ -88,13 +88,15 @@ hosp_person hosp_user (){
  * @return Returns 0 if valid, non-zero if invalid.
  */
 
-/*
-int cprValidator(char cpr[CPR_LENGTH]){
-    regex_t regex;
-    regcomp(&regex, "^[0-9]{6}-[0-9]{4}$", REG_EXTENDED);
-    return regexec(&regex, cpr, 0, NULL, 0);
+int cpr_validator(char cpr[CPR_LENGTH]){
+    int digits1, digits2;
+
+    if (sscanf(cpr, "%6d-%4d", &digits1, &digits2) == 2 && strlen(cpr) == CPR_LENGTH - 1) {
+        return 0;
+    }
+
+    return 1;
 }
-*/
 
 patient search_patient(FILE *fp)
 {
@@ -105,14 +107,15 @@ patient search_patient(FILE *fp)
     // While loop for inserting and validating cpr number
     while(1){
         scanf("%s", cpr);
+        clear_buffer();
 
-        int cpr_match = 0;/*cprValidator(cpr);*/
+        int cpr_match = cpr_validator(cpr);
 
         if (cpr_match == 0){
             break;
-        };
+        }
 
-        printf("Invalid format for CPR, try again.\n> ");
+        printf("\nInvalid format for CPR, try again.\n> ");
 
     }
 
@@ -136,11 +139,8 @@ patient search_patient(FILE *fp)
             // If user want to create a patient
             if (user_choice == 'y' || user_choice == 'Y' ){
 
-                // Create patient function here
-                printf("CREATE PATIENT HERE");
-                exit(1);
-                
-                //return create_patient();
+                // Create patient function
+                return create_patient();
             }else if(user_choice == 'n') {
                 printf("EXIT PROGRAM");
                 exit(1);
@@ -170,8 +170,6 @@ void create_referral(patient chosen_patient, GP current_gp) {
     //if not, a patient is created from scratch with create_patient
     //otherwise only asks for variable data in update_patient
     //saves patient data in the database
-
-
 
     referral new_referral;
 
@@ -315,7 +313,6 @@ void print_referral(referral new_referral){
 
 patient create_patient() {
     //Henvist til denne funktion hvis patient ikke findes.
-
     patient new_patient;
     //CPR
     printf("Enter CPR of patient:\n>");
@@ -377,7 +374,8 @@ patient create_patient() {
     fprintf(pat_reg, "\n%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s",
             new_patient.CPR, new_patient.name, new_patient.age, new_patient.sex, new_patient.phone_num,
             new_patient.address.zip_code, new_patient.address.city, new_patient.address.street_name,
-            new_patient.address.house_number_etc, new_patient.relative.name, new_patient.relative.phone_num, new_patient.relative.email);
+            new_patient.address.house_number_etc, new_patient.relative.name, new_patient.relative.phone_num,
+            new_patient.relative.email);
 
 
     //return patient hvis der skal oprettes en referral, ellers ikke
@@ -387,7 +385,7 @@ patient create_patient() {
 
 void review_referral(referral ref) {
     print_referral(ref);
-    printf("Do you wish to schedule a timeslot for the patient? (y/n)\n"); //access all referrals - sort either through prioritization or chronologically
+    printf("\nDo you wish to schedule a timeslot for the patient? (y/n)\n"); //access all referrals - sort either through prioritization or chronologically
     char choice = ' ';
     while (1) {
         scanf(" %c", &choice);
@@ -400,7 +398,7 @@ void review_referral(referral ref) {
     if (choice == 'n') {
     }
     printf("Do you wish to manually schedule a timeslot(1) or receive a recommendation(2)?\n"
-           "chose 1 for manual or 2 for recommended timeslot\n");
+           "choose 1 for manual or 2 for recommended timeslot\n");
     while (1) {
         scanf(" %c", &choice);
         if (choice == '1' || choice == '2') {
@@ -432,31 +430,21 @@ void review_referral(referral ref) {
     }
     fclose(fp);
     print_node(&free_timeslots);
-    printf("Chose time by inputting 'day' and 'timeslot'");
+
     int chosen_day;
     char chosen_timeslot[5];
-    scanf("%d %4s", &chosen_day, chosen_timeslot);
-    fp = fopen("timetable.csv", "r+");
-    if (fp == NULL) {
-        printf("File not available");
-        exit(EXIT_FAILURE);
-    }
+
+    printf("\nChoose a day:\n>");
+    scanf("%d", &chosen_day);
+    printf("\nChoose a timeslot:\n>");
+    scanf("%4s", chosen_timeslot);
+
+    time_update(chosen_day, chosen_timeslot);
 
 
-    char buffer[150];
-    char *token;
-    // Read the file until the word is found
-    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-        token = strtok(buffer, ",");
-
-        if (strcmp(token, chosen_timeslot) == 0) {
-            fprintf(fp, "o");
-            break;
-        }
 
 
-        fclose(fp);
-    }
+
 }
 //option to see current time schedule
 //access specific referrals for review
@@ -470,9 +458,9 @@ void add_node_timeslot(nodelist* list, int day, char* time){
         exit(EXIT_FAILURE);
     }
     new_node->next = list->head;
-    char timerange[5];
-    sscanf(time, "%4s",timerange);
-    strcpy(new_node->time, timerange);
+    char time_range[5];
+    sscanf(time, "%4s",time_range);
+    strcpy(new_node->time, time_range);
     new_node->day = day;
     list->head = new_node;
 }
@@ -499,6 +487,71 @@ void print_test_personnel_hosp (struct hosp_person user) {
 }
 
 
+void chomp(char *s) {
+    while (*s && *s != '\n' && *s != '\r') s++;
+    *s = 0;
+}
+
+int time_update (int chosen_day, char chosen_time[]) {
+    FILE *srcFile = fopen("timetable.csv", "r");
+    FILE *destFile = fopen("temp_timetable.csv", "w");
+    if (!srcFile || !destFile) {
+        perror("Fejl ved åbning af filer");
+        return -1;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    int day;
+    char times[NUM_TIMES][6];  // Array til at holde tidspunkterne
+    int found = 0;
+
+
+    while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
+        chomp(line);
+        if (sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]",
+                   &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
+                   times[10], times[11], times[12], times[13], times[14])) {
+            char full_time[7];
+            sprintf(full_time, "%sa", chosen_time);
+
+            if (day == chosen_day) {
+                for (int i = 0; i < NUM_TIMES; i++) {
+                    if (strcmp(times[i], full_time) == 0) {
+                        sprintf(times[i], "%so", chosen_time);
+                        found = 1;
+                        sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
+                                times[3], times[4], times[5], times[6], times[7], times[8], times[9],
+                                times[10], times[11], times[12], times[13], times[14]); // Opdaterer linjen
+                        break; // Stopper ved første match.
+                    }
+                }
+            }
+        }
+
+        fprintf(destFile, "%s\n", line);
+    }
+
+    fclose(srcFile);
+    fclose(destFile);
+
+    if (!found) {
+        printf("ID %d med tidspunkt %s ikke fundet eller allerede optaget.\n", chosen_day, chosen_time);
+        remove("temp_timetable.csv");
+        return -1;
+    } else {
+        printf("Opdatering gennemført. Erstatter original fil med ny fil...\n");
+        remove("timetable.csv");
+        rename("temp_timetable.csv", "timetable.csv");
+    }
+
+    return 0;
+}
+
+
+
+
+
+
 void clear_buffer () {
 
     int ch;
@@ -508,5 +561,9 @@ void clear_buffer () {
     while ((ch = getchar()) != '\n' && ch != EOF);
 
 }
+
+
+
+
 
 
