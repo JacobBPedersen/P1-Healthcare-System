@@ -8,7 +8,7 @@ int main()
     patient current_patient;
 
     referral new_test = {"333333-3333","Knud Knudsen",25,'f',"+4577777777","9000","Aalborg","Lil knud","10 4.tv","farmand","+4566666666","farmand@gmail.com",2,3,"dawd","dwadwdaw","ffdfd","adsc","rfr","dsadrgr",0,"-","Niels Nielsen","Secretary","Nordlaege","+4500000000"};
-
+    review_referral(new_test);
 
     FILE *patients_file = fopen("patient_register.csv", "r");
 

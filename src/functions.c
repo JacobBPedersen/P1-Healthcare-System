@@ -415,17 +415,19 @@ void review_referral(referral ref) {
     char time[15][6];
 
     int day;
-    fscanf(fp, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],"
-               "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", &day, time[0], time[1],
-           time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9], time[10], time[11],
-           time[12], time[13], time[14]);
-
     nodelist free_timeslots = {NULL};
     char time_slot_avaliable;
-    for (int i = 0; i < NUMBER_OF_TIMESLOTS; ++i) {
-        sscanf(time[i], "%*4[0-9]%c", &time_slot_avaliable);
-        if (time_slot_avaliable == 'a') {
-            add_node_timeslot(&free_timeslots, day, time[i]);
+    for (int i = 0; i < 5; ++i) {
+        fscanf(fp, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],"
+                   "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", &day, time[0], time[1],
+               time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9], time[10], time[11],
+               time[12], time[13], time[14]);
+
+        for (int j = 0; j < NUMBER_OF_TIMESLOTS; ++j) {
+            sscanf(time[j], "%*4[0-9]%c", &time_slot_avaliable);
+            if (time_slot_avaliable == 'a') {
+                add_node_timeslot(&free_timeslots, day, time[j]);
+            }
         }
     }
     fclose(fp);
