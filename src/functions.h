@@ -90,7 +90,7 @@ void print_node(nodelist* list);
 
 //Prototypes of functions:
 
-char *search_cpr(char *cpr, FILE *file);
+char *search_first(char *cpr, FILE *file);
 
 GP GP_user();
 
@@ -98,7 +98,7 @@ hosp_person hosp_user ();
 
 void user_cred(int* GP_or_Hosp);
 
-patient search_patient(FILE *fp);
+patient search_patient();
 
 void create_referral(patient chosen_patient, GP current_gp);
 
@@ -115,6 +115,8 @@ void print_test_personnel_hosp (hosp_person user);
 void clear_buffer();
 
 int time_update (int chosen_day, char chosen_time[]);
+
+int edit_patient_info();
 
 void chomp(char *s);
 

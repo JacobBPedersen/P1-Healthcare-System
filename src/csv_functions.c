@@ -1,7 +1,7 @@
 #include <string.h>
 #include "functions.h"
 
-char *search_cpr(char *first_col, FILE *file) //Kald funktion search first
+char *search_first(char *cpr, FILE *file) //Kald funktion search first
 {
     char buffer[150];
 
@@ -13,7 +13,7 @@ char *search_cpr(char *first_col, FILE *file) //Kald funktion search first
         strcpy(return_buffer, buffer);
         token = strtok(buffer, ",");
 
-        if (strcmp(token, first_col) == 0)
+        if (strcmp(token, cpr) == 0)
         {
             fclose(file);
             return strdup(return_buffer);

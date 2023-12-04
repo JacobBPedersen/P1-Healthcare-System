@@ -1,12 +1,11 @@
 #include "functions.h"
-//#include <regex.h>
 
 void user_cred(int* GP_or_Hosp) {
     //Takes input as to who is using the program, and what it is supposed to do at the moment
     int invalid_input;
     do {
         invalid_input = 0;
-        printf("Please enter if GP:\n>");
+        printf("Please enter if GP (1) or Hospital (0):\n>");
         scanf(" %d", GP_or_Hosp);
         clear_buffer();
         if (*GP_or_Hosp != 0 && *GP_or_Hosp != 1) {
@@ -34,7 +33,7 @@ GP GP_user(){
             exit(EXIT_FAILURE);
         }
 
-        char *GP_info = search_cpr(id, fp_gp);
+        char *GP_info = search_first(id, fp_gp);
         fclose(fp_gp);
 
         if (strcmp(GP_info, "Value not found") == 0) {
@@ -65,7 +64,7 @@ hosp_person hosp_user (){
             exit(EXIT_FAILURE);
         }
 
-        char *hosp_info = search_cpr(id, fp_hosp);
+        char *hosp_info = search_first(id, fp_hosp);
         fclose(fp_hosp);
 
         if (strcmp(hosp_info, "Value not found") == 0) {
@@ -98,8 +97,15 @@ int cpr_validator(char cpr[CPR_LENGTH]){
     return 1;
 }
 
-patient search_patient(FILE *fp)
-{
+patient search_patient() {
+
+    FILE *fp = fopen("patient_register.csv", "r");
+
+    if(fp == NULL){
+
+        printf("Error");
+    }
+
     char cpr[CPR_LENGTH];
 
     printf("\nEnter CPR of the patient.\n> ");
@@ -120,7 +126,9 @@ patient search_patient(FILE *fp)
     }
 
     // Searches for a valid cpr number in the file register
-    char *searched_patient = search_cpr(cpr, fp);
+    char *searched_patient = search_first(cpr, fp);
+
+    fclose(fp);
 
     // If patients doest exist, create on
     if (strcmp(searched_patient, "Value not found") == 0)
@@ -160,7 +168,10 @@ patient search_patient(FILE *fp)
            return_patient.address.street_name, return_patient.address.house_number_etc,
            return_patient.relative.name, return_patient.relative.phone_num, return_patient.relative.email);
 
+
     return return_patient;
+
+
 }
 
 
@@ -203,7 +214,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
     //Language
 
     // Der skal promptes med en bool før den kan gå videre
-    printf("Acknowledge if there is a language barrier of the patient for the referral:\n>");
+    printf("Acknowledge if there is a language barrier of the patient for the referral (yes: 1, no: 0):\n>");
     scanf(" %d", &new_referral.language_barrier);
     //Language
     if (new_referral.language_barrier == 0) {
@@ -298,7 +309,7 @@ void print_referral(referral new_referral){
     //Language
 
     // Der skal promptes med en bool før den kan gå videre
-    printf("Is a language barrier of the patient for the referral: %d\n>", new_referral.language_barrier);
+    printf("There is a language barrier of the patient for the referral: %d\n>", new_referral.language_barrier);
     //Language
     if (new_referral.language_barrier == 0) {
         new_referral.language[0] = '-';
@@ -537,16 +548,136 @@ int time_update (int chosen_day, char chosen_time[]) {
     fclose(destFile);
 
     if (!found) {
-        printf("ID %d med tidspunkt %s ikke fundet eller allerede optaget.\n", chosen_day, chosen_time);
+        printf("Day %d and time %s is not found, or already occupied.\n", chosen_day, chosen_time);
         remove("temp_timetable.csv");
         return -1;
     } else {
-        printf("Opdatering gennemført. Erstatter original fil med ny fil...\n");
+        printf("\nAppointment made\n");
         remove("timetable.csv");
         rename("temp_timetable.csv", "timetable.csv");
     }
 
     return 0;
+}
+
+int edit_patient_info() {
+
+    char line[MAX_LINE_LENGTH];
+    char cpr[13];
+    int found = 0;
+
+    //patient return_patient = {"333333-3333","Knud Knudsen",25,'f',"+4577777777","9000","Aalborg","Lil knud","10 4.tv","farmand","+4566666666","farmand@gmail.com"};
+
+
+    patient return_patient = search_patient();
+
+    char target_cpr[13];
+    strcpy(target_cpr, return_patient.CPR);
+
+    int cond = 1;
+    while (cond == 1) {
+        int choice;
+        printf("What do you want to edit (1:name, 2:age, 3:sex, 4:phone_number, 5:zip-code,\n"
+               "6:city, 7:street_name, 8:house_number, 9:rel_name, 10:rel_phone_number, 11:rel_email\n"
+               "For complete edit, write '-1'\n>");
+        scanf(" %d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("enter name:\n>");
+                scanf(" %s", return_patient.name);
+                break;
+            case 2:
+                printf("enter age:\n>");
+                scanf(" %d", &return_patient.age);
+                break;
+            case 3:
+                printf("enter sex:\n>");
+                scanf(" %c", &return_patient.sex);
+                break;
+            case 4:
+                printf("enter phone number:\n>");
+                scanf(" %s", return_patient.phone_num);
+                break;
+            case 5:
+                printf("enter zip code:\n>");
+                scanf(" %s", return_patient.address.zip_code);
+                break;
+            case 6:
+                printf("enter city:\n>");
+                scanf(" %s", return_patient.address.city);
+                break;
+            case 7:
+                printf("enter street name:\n>");
+                scanf(" %s", return_patient.address.street_name);
+                break;
+            case 8:
+                printf("enter house number etc:\n>");
+                scanf(" %s", return_patient.address.house_number_etc);
+                break;
+            case 9:
+                printf("enter name of relative:\n>");
+                scanf(" %s", return_patient.relative.name);
+                break;
+            case 10:
+                printf("enter phone number of relative:\n>");
+                scanf(" %s", return_patient.relative.phone_num);
+                break;
+            case 11:
+                printf("enter email of relative:\n>");
+                scanf(" %s", return_patient.relative.email);
+                break;
+            case -1:
+                cond = 0;
+                break;
+            default:
+                printf("\nInvalid input\n");
+                break;
+        }
+
+    }
+
+
+    FILE *srcFile = fopen("patient_register.csv", "r");
+    FILE *destFile = fopen("temp_patient_register.csv", "w");
+    if (!srcFile || !destFile) {
+        perror("Fejl ved åbning af filer");
+        return -1;
+    }
+
+    while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
+        chomp(line);
+        sscanf(line, "%[^,]", cpr);
+        //printf("\nTest cpr: %s", cpr);
+        if(strcmp(target_cpr, cpr) == 0){
+            sprintf(line, "%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s", return_patient.CPR, return_patient.name, return_patient.age,
+                    return_patient.sex, return_patient.phone_num, return_patient.address.zip_code, return_patient.address.city,
+                    return_patient.address.street_name, return_patient.address.house_number_etc,
+                    return_patient.relative.name, return_patient.relative.phone_num, return_patient.relative.email);
+            //fseek(destFile, -strlen(line), SEEK_CUR);
+            fprintf(destFile, "%s\n", line);
+            found = 1;
+        } else {
+            fprintf(destFile, "%s\n", line);
+        }
+    }
+
+    fclose(srcFile);
+    fclose(destFile);
+
+    if (!found) {
+        printf("CPR %s not found", target_cpr);
+        remove("temp_patient_register.csv");
+        return -1;
+    } else {
+        printf("\nEdit complete.\n");
+        remove("patient_register.csv");
+        rename("temp_patient_register.csv", "patient_register.csv");
+    }
+
+    return 0;
+
+
 }
 
 
