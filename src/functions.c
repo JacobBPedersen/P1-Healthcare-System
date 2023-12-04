@@ -193,6 +193,9 @@ void create_referral(patient chosen_patient, GP current_gp) {
     //Diagnosis category
     printf("Choose the diagnosis category of the referral:\n>");
     scanf(" %d", &new_referral.diagnosis_cat);
+    //Diagnosis severity
+    printf("Choose the diagnosis severity of the referral:\n>");
+    scanf(" %d", &new_referral.diagnosis_sev);
     //Diagnosis description
     printf("Enter a description for the diagnosis of the referral:\n>");
     scanf(" %[^\n]", new_referral.diagnosis_desc);
@@ -231,8 +234,8 @@ void create_referral(patient chosen_patient, GP current_gp) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(referrals_documentation, "\n%s,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
-            new_referral.patient.CPR, new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_desc,
+    fprintf(referrals_documentation, "\n%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
+            new_referral.patient.CPR, new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_sev, new_referral.diagnosis_desc,
             new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
             new_referral.ref_purpose, new_referral.language_barrier, new_referral.language, new_referral.GP.name,
             new_referral.GP.title, new_referral.GP.clinic, new_referral.GP.phone_num);
@@ -245,7 +248,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(referrals_send, "\n%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
+    fprintf(referrals_send, "\n%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
             //patient
             new_referral.patient.CPR, new_referral.patient.name, new_referral.patient.age, new_referral.patient.sex,
             new_referral.patient.phone_num,
@@ -255,7 +258,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
             //relative
             new_referral.patient.relative.name, new_referral.patient.relative.phone_num, new_referral.patient.relative.email,
             //referral info
-            new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_desc,
+            new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_sev, new_referral.diagnosis_desc,
             new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
             new_referral.ref_purpose, new_referral.language_barrier, new_referral.language, new_referral.GP.name,
             new_referral.GP.title, new_referral.GP.clinic, new_referral.GP.phone_num);
@@ -294,6 +297,8 @@ void print_referral(referral new_referral){
     printf("Destination of the referral: %d\n", new_referral.ref_dest);
     //Diagnosis category
     printf("Diagnosis category of the referral: %d \n", new_referral.diagnosis_cat);
+    //Diagnosis severity
+    printf("Diagnosis severity of the referral: %d \n", new_referral.diagnosis_sev);
     //Diagnosis description
     printf("Description for the diagnosis of the referral: %s\n", new_referral.diagnosis_desc);
     //Short anamnesis
@@ -696,7 +701,8 @@ void clear_buffer () {
 }
 
 
-
+//Kirk's noter:
+//Inbox, sort severity
 
 
 

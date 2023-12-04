@@ -58,6 +58,7 @@ typedef struct referral {
     patient patient;
     int ref_dest;
     int diagnosis_cat;
+    int diagnosis_sev;
     char diagnosis_desc[100];
     char short_anamnesis[1000];
     char results[500];
