@@ -121,4 +121,6 @@ int edit_patient_info();
 
 void chomp(char *s);
 
+int cpr_validator(char cpr[CPR_LENGTH]);
+
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H

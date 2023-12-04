@@ -1,6 +1,5 @@
 add_library(functions functions.c
-        csv_functions.c
-        ../test/main.c)
+        csv_functions.c)
 
 add_executable(P1_Healthcare_System main.c
         csv_functions.c)
