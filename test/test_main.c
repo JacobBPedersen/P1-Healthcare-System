@@ -2,7 +2,7 @@
 #include "../src/functions.h"
 
 void test_create_patient() {
-    if (freopen("/Users/brandonbondig/CLionProjects/P1-Healthcare-System/test/inputs/create_patient.txt", "r", stdin) == NULL) {
+    if (freopen("./inputs/create_patient.txt", "r", stdin) == NULL) {
         perror("Failed to open file");
         return;
     }
