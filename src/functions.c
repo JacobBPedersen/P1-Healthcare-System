@@ -314,12 +314,12 @@ void print_referral(referral new_referral){
     //Language
 
     // Der skal promptes med en bool før den kan gå videre
-    printf("There is a language barrier of the patient for the referral: %d\n>", new_referral.language_barrier);
+    printf("There is a language barrier of the patient for the referral: %d\n", new_referral.language_barrier);
     //Language
     if (new_referral.language_barrier == 0) {
         new_referral.language[0] = '-';
     } else {
-        printf("Spoken language of the patient for the referral: %s\n>", new_referral.language);
+        printf("Spoken language of the patient for the referral: %s\n", new_referral.language);
     }
     //General practioner
     //  new_referral.GP = GP; Skal være lig med hvad man indtaster ved login
@@ -526,7 +526,7 @@ int time_update (int chosen_day, char chosen_time[]) {
 
     while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
         chomp(line);
-        if (sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]",
+        if (sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
                    &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
                    times[10], times[11], times[12], times[13], times[14])) {
             char full_time[7];
@@ -686,7 +686,162 @@ int edit_patient_info() {
 }
 
 
+referral referral_inbox() {
 
+    char line[TEST];
+
+    FILE* fp = fopen("referrals_send.csv", "r");
+
+    if (fp == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    int amount_ref=0;
+    while(fgets(line, TEST, fp)) {
+        amount_ref++;
+    }
+
+    rewind(fp);
+
+    referral array[amount_ref+1];
+    int i = 0;
+
+
+    while(fgets(line, TEST, fp)) {
+        sscanf(line, "%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
+                     "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
+                //patient
+               array[i].patient.CPR, array[i].patient.name,
+               &array[i].patient.age, &array[i].patient.sex,
+               array[i].patient.phone_num,
+                //address
+               array[i].patient.address.zip_code, array[i].patient.address.city,
+               array[i].patient.address.street_name, array[i].patient.address.house_number_etc,
+                //relative
+               array[i].patient.relative.name, array[i].patient.relative.phone_num, array[i].patient.relative.email,
+                //referral info
+               &array[i].ref_dest, &array[i].diagnosis_cat, &array[i].diagnosis_sev, array[i].diagnosis_desc,
+               array[i].short_anamnesis, array[i].results, array[i].res_bact, array[i].handicap,
+               array[i].ref_purpose, &array[i].language_barrier, array[i].language, array[i].GP.name,
+               array[i].GP.title, array[i].GP.clinic, array[i].GP.phone_num);
+        printf("\nTEST: %s\n", array[i].diagnosis_desc);
+        i++;
+    }
+
+    fclose(fp);
+
+//    for (int j = 0; j < amount_ref; ++j) {
+//        printf("\nREFERRAL NO. %d", j+1);
+//        printf("\nCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
+//               array[j].patient.CPR, array[j].patient.name, array[j].diagnosis_cat, array[j].diagnosis_sev);
+//        //print_referral(array[j]);
+//
+//    }
+
+
+    int cond = 1;
+    while(cond) {
+
+        for (int j = 0; j < amount_ref; ++j) {
+            printf("\nREFERRAL NO. %d", j+1);
+            printf("\nCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
+                   array[j].patient.CPR, array[j].patient.name, array[j].diagnosis_cat, array[j].diagnosis_sev);
+            //print_referral(array[j]);
+
+        }
+
+        char target_id[13];
+        int sort_choice;
+        char create_ref;
+        printf("\nDo you want to sort referrals?\n1 - Severity\t2 - Zip Code\t-1 - Exit"
+               "\nDo you want to choose a referral? Press 3\n>");
+        scanf("%d", &sort_choice);
+
+        switch (sort_choice) {
+            case 1:
+                sort_ref(array, amount_ref, compare_sev);
+                break;
+            case 2:
+                sort_ref(array, amount_ref, compare_zip);
+                break;
+            case 3:
+                printf("\nChoose by CPR/reference ID:\n>");
+                scanf(" %s", target_id);
+                for (int j = 0; j < amount_ref; ++j) {
+                    if (strcmp(target_id, array[j].patient.CPR) == 0) {
+                        print_referral(array[j]);
+
+                        printf("\nReview referral for selected patient (y / n):\n>");
+                        scanf(" %c", &create_ref);
+                        if (create_ref == 'n') {
+                            break;
+                        }
+                        else {
+                            return array[j];
+                        }
+                    }
+                }
+                break;
+            case -1:
+                cond = 0;
+                break;
+            default:
+                printf("\nInvalid input\n");
+        }
+    }
+
+}
+
+//IKKE SLETTE
+//    while(fgets(line, TEST, fp)){
+//        printf("\nTEST: %s\n", line);
+//    }
+
+//    int amount;
+//    printf("\nEnter amount of referrals to be printed\n");
+//    scanf("%d", &amount);
+//
+//
+//    for (int i = 0; i < amount; ++i) {
+//        fgets(line, TEST, fp);
+//        printf("\nTEST: %s\n", line);
+//    }
+
+
+int compare_sev (const void *x_ref, const void *y_ref) {
+
+    referral* x = (referral*)x_ref;
+    referral* y = (referral*)y_ref;
+
+    // First, comparing the categories.
+    if (x->diagnosis_cat != y->diagnosis_cat) {
+        return (int)y->diagnosis_cat - (int)x->diagnosis_cat; // Type cast to int, to avoid clang-tidy and conversion errors
+    }
+    // If the categories were not 'not equal', compare the severity instead, since it then determines the order.
+    return (int)y->diagnosis_sev - (int)x->diagnosis_sev; // Type cast to int, to avoid clang-tidy and conversion errors
+
+}
+
+int compare_zip (const void *x_ref, const void *y_ref) {
+
+    referral* x = (referral*)x_ref;
+    referral* y = (referral*)y_ref;
+
+    // Comparing the zip codes.
+    if (x->patient.address.zip_code != y->patient.address.zip_code) {
+        return strcmp(x->patient.address.zip_code, y->patient.address.zip_code); // Utilizing string compare to determine order of zip codes.
+    } else {
+       return 0;
+    }
+
+}
+
+void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref)) {
+
+    qsort(ref_list, size_of_list, sizeof(referral), sort_type);
+
+}
 
 
 
@@ -701,8 +856,89 @@ void clear_buffer () {
 }
 
 
-//Kirk's noter:
-//Inbox, sort severity
+
+void GP_main_flow (GP current_gp) {
+
+    print_test_personnel_gp(current_gp); // test
+
+    patient current_patient;
+
+    int exit = 1;
+
+    while (exit == 1) {
+        int mode_choice_gp;
+        printf("\nSelect mode:\n1 - Create Referral\t2 - Create Patient\t3 - Edit Patient\t-1 - Exit\n>");
+        scanf("%d", &mode_choice_gp);
+        switch (mode_choice_gp) {
+            case 1:
+                current_patient = search_patient();
+                char choice_ref;
+                printf("Do you want to create a referral for a patient (y/n) Name:%s CPR:%s\n>", current_patient.name,
+                       current_patient.CPR);
+                scanf(" %c", &choice_ref);
+                if (choice_ref != 'y') {
+                    break;
+                }
+                create_referral(current_patient, current_gp);
+                printf("Do you want to continue (y/n):\n>");
+                scanf(" %c", &choice_ref);
+                if (choice_ref != 'y') {
+                    exit = 0;
+                }
+                break;
+            case 2:
+                create_patient();
+                break;
+            case 3:
+                edit_patient_info();
+                break;
+            case -1:
+                exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
+                break;
+            default:
+                printf("Invalid input");
+        }
+    }
+
+
+}
 
 
 
+void hosp_main_flow (hosp_person current_hosp) {
+
+    print_test_personnel_hosp(current_hosp); // test
+
+    patient current_patient;
+
+    referral current_ref;
+
+    int exit = 1;
+
+    while (exit == 1) {
+        int mode_choice_hosp;
+        printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t3 - Forward Referall\t-1 - Exit\n>");
+        scanf("%d", &mode_choice_hosp);
+        switch (mode_choice_hosp) {
+            case 1:
+                current_ref = referral_inbox();
+                review_referral(current_ref);
+                //Når man er i inbox kan man vælge en patient, som fører videre til review referral.
+                // (Evt. i forbindelse med print af ref, kunne man printe bare de kritiske elemenenter, når alle printes.
+                // EVT. ikke print navn ud til at starte med. Der kan printes alder og sygdom mm. men ikke navn eller
+                // andre ting som kan give bias.)
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case -1:
+                exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
+                break;
+            default:
+                printf("Invalid input");
+        }
+    }
+
+
+}

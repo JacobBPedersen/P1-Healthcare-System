@@ -12,6 +12,18 @@
 //Updating timetable
 #define MAX_LINE_LENGTH 150
 #define NUM_TIMES 15  // Antallet af tidspunkter i hver linje
+#define TEST 400
+
+
+enum Hospital_nordjyl {Hjoerring = 1, Aalborg, Aalborg_super};
+enum Hospital_midtjyl {Aarhus = 4, Horsens, Hammel, Silkeborg, Viborg, Herning, Holstebro, Lemvig, Randers};
+enum Hospital_syddan {Broerup = 13, Esbjerg, Grindsted, Aabenraa, Soenderborg, Toender, Kolding,
+        Middelfart, Vejle, Odense, Svendborg, Nyborg, Aeroe};
+enum Hospital_sjael {Holbaek = 26, Nykoebing_Falster, Naestved, Ringsted, Koege, Roskilde, Slagelse};
+enum Hospital_hoved {Amager = 33, Bispenbjerg, Bornholm, Frederiksberg, Gentofte, Herlev, Hvidovre,
+        Frederikssund, Hilleroed, Helsingoer, Glostrup};
+
+
 
 typedef struct address {
     char zip_code[5];
@@ -118,6 +130,18 @@ void clear_buffer();
 int time_update (int chosen_day, char chosen_time[]);
 
 int edit_patient_info();
+
+referral referral_inbox ();
+
+int compare_sev (const void *x_ref, const void *y_ref);
+
+void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
+
+int compare_zip (const void *x_ref, const void *y_ref);
+
+void GP_main_flow (GP current_gp);
+
+void hosp_main_flow (hosp_person current_hosp);
 
 void chomp(char *s);
 

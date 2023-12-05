@@ -6,3 +6,5 @@ CPR,Destination,Diagnosis_Category,Diagnosis_Desc,Anamnesis,Results,Res_Bact,Han
 333333-3333,2,2,2,2,2,2,2,2,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 333333-3333,2,2,2,2,2,2,2,2,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 333333-3333,2,2,test,test,test,test,test,test,1,engelsk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+101010-1010,1,1,1,test,testa,testb,testc,testd,teste,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+323232-3232,1,2,3,testa,testm,testh,testq,testh,testw,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
