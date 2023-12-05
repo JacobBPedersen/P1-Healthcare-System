@@ -145,4 +145,6 @@ void hosp_main_flow (hosp_person current_hosp);
 
 void chomp(char *s);
 
+int cpr_validator(char cpr[CPR_LENGTH]);
+
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H
