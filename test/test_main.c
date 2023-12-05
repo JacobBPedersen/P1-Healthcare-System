@@ -14,6 +14,7 @@ void test_create_patient() {
     assert(strcmp("Odense",test_patient.address.city) == 0);
     assert(strcmp("Sofie Andersen",test_patient.relative.name) == 0);
     assert(strcmp("sofie.andersen@mail.com",test_patient.relative.email) == 0);
+
 }
 
 void test_cpr_validator(){
@@ -29,7 +30,7 @@ void test_cpr_validator(){
     assert(test3 == 1);
     assert(test4 == 0);
     assert(test5 == 1);
-    assert(test6== 1);
+    assert(test6 == 1);
 
 }
 
