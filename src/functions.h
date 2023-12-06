@@ -25,6 +25,9 @@ enum Hospital_hoved {Amager = 33, Bispenbjerg, Bornholm, Frederiksberg, Gentofte
 
 
 
+enum diagnosis{rhino_virus, cough, flue,whooping_cough_adult,acute_child_bronchitis, asthma,whooping_cough_infant,
+        COPD, pulmonary_clot, cystic_fibrosis,cancer};
+
 typedef struct address {
     char zip_code[5];
     char city[DETAILS_LENGTH];
@@ -93,8 +96,8 @@ typedef struct nodelist{
     node* head;
 }nodelist;
 
-void add_node_timeslot(nodelist* list, int day, char* time);
-void print_node(nodelist* list);
+node* add_node_timeslot(nodelist* list, int day, char* time);
+void print_reverse_order(node* current);
 
 
 
@@ -146,5 +149,8 @@ void hosp_main_flow (hosp_person current_hosp);
 void chomp(char *s);
 
 int cpr_validator(char cpr[CPR_LENGTH]);
+
+void print_node(nodelist* list);
+void reverse_list(nodelist* list);
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H

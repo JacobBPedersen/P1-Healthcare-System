@@ -469,7 +469,7 @@ void review_referral(referral ref) {
 //create time in an available time slot
 
 
-void add_node_timeslot(nodelist* list, int day, char* time){
+node* add_node_timeslot(nodelist* list, int day, char* time){
     node* new_node = (node*) malloc(sizeof(node));
     if(new_node==NULL){
         printf("No memory - goodbye\n");
@@ -483,13 +483,41 @@ void add_node_timeslot(nodelist* list, int day, char* time){
     list->head = new_node;
 }
 
-void print_node(nodelist* list){
+void reverse_list(nodelist* list) {
+    node* prev = NULL;
     node* current = list->head;
-    while(current != NULL){
-        printf("Day %d - Time: %s\t",current->day, current->time);
+    node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    list->head = prev;
+}
+
+void print_node(nodelist* list) {
+    reverse_list(list);
+
+    node* current = list->head;
+    int prevDay = -1;
+
+    while (current != NULL) {
+        if (current->day != prevDay) {
+            printf("\n");
+            printf("Day %d\nTime: %s  ", current->day, current->time);
+        } else {
+            printf("Time: %s  ", current->time);
+        }
+
+        prevDay = current->day;
         current = current->next;
     }
+    reverse_list(list);
 }
+
+
 
 
 void print_test_personnel_gp (struct GP user) {
