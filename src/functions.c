@@ -14,9 +14,7 @@ void user_cred(int* GP_or_Hosp) {
         }
 
     } while (invalid_input == 1);
-
 }
-
 
 GP GP_user(){
 

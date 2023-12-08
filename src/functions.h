@@ -93,35 +93,31 @@ typedef struct nodelist{
     node* head;
 }nodelist;
 
-void add_node_timeslot(nodelist* list, int day, char* time);
-void print_node(nodelist* list);
+void add_node_timeslot(nodelist* list, int day, char* time); // done
 
-
-
-
-
+void print_node(nodelist* list); // done
 
 //Prototypes of functions:
 
-char *search_first(char *cpr, FILE *file);
+char *search_first(char *cpr, FILE *file); //done
 
-GP GP_user();
+GP GP_user(); // done
 
-hosp_person hosp_user ();
+hosp_person hosp_user (); // done
 
-void user_cred(int* GP_or_Hosp);
+void user_cred(int* GP_or_Hosp); // ?
 
-patient search_patient();
+patient search_patient(); // done
 
 void create_referral(patient chosen_patient, GP current_gp);
 
 void print_referral(referral new_referral);
 
-patient create_patient();
+patient create_patient(); //done
 
 void review_referral(referral ref);
 
-void print_test_personnel_gp (GP user); // test
+void print_test_personnel_gp (GP user);
 
 void print_test_personnel_hosp (hosp_person user);
 
@@ -145,6 +141,6 @@ void hosp_main_flow (hosp_person current_hosp);
 
 void chomp(char *s);
 
-int cpr_validator(char cpr[CPR_LENGTH]);
+int cpr_validator(char cpr[CPR_LENGTH]); //done
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H
