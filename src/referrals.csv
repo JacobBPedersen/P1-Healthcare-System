@@ -8,3 +8,10 @@ CPR,Destination,Diagnosis_Category,Diagnosis_Desc,Anamnesis,Results,Res_Bact,Han
 333333-3333,2,2,test,test,test,test,test,test,1,engelsk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 101010-1010,1,1,1,test,testa,testb,testc,testd,teste,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 323232-3232,1,2,3,testa,testm,testh,testq,testh,testw,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+333333-3333,1,5,4,Smerte i ben,Ondt i venstre ben,Inflamation,Nek,Nej,Nej,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+333333-3333,2,3,4,test,test,test,test,test,test,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+333333-3333,4,3,5,test,tet,test,test,test,test,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+333333-3333,5,2,1,test,test,test,test,test,test,1,test,Niels Nielsen,Secretary,Nordlaege,+4500000000
+333333-3333,2,2,3,asd,asd,asd,ads,ad,asd,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+333333-3333,2,2,0,asd,asd,asd,asd,asd,asd,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+333333-3333,2,3,1,dfd,fdf,fdfd,fddf,fdfd,fdfd,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343

@@ -176,6 +176,46 @@ patient search_patient() {
 
 
 
+int ref_id_create() {
+
+    char line[TEST];
+
+    FILE *referrals_documentation = fopen("referrals_send_doc.csv", "r");
+    if (referrals_documentation == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+
+    int i = 0;
+    while (fseek(referrals_documentation, i, SEEK_END) == 0) {
+        if (fgetc(referrals_documentation) == '\n') {
+            break;
+        }
+        i--;
+    }
+
+    if (fgets(line, TEST, referrals_documentation) == NULL) {
+        printf("Error");
+        return 1;
+    }
+
+    fclose(referrals_documentation);
+
+    printf("\nTEST: %s\n", line);
+
+    int ref_id;
+    sscanf(line, "%d", &ref_id);
+
+    printf("\nTest: %d", ref_id);
+
+    return ref_id;
+
+
+}
+
+
+
 void create_referral(patient chosen_patient, GP current_gp) {
     //checks if the patient is already registered.
     //if not, a patient is created from scratch with create_patient
@@ -242,13 +282,18 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
     fclose(referrals_documentation);
 
+
+    new_referral.ref_id = ref_id_create()+1;
+    printf("TESTLALA");
+
     FILE *referrals_send = fopen("referrals_send.csv", "a+");
     if (referrals_send == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
     }
 
-    fprintf(referrals_send, "\n%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
+    fprintf(referrals_send, "\n%d,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
+            new_referral.ref_id,
             //patient
             new_referral.patient.CPR, new_referral.patient.name, new_referral.patient.age, new_referral.patient.sex,
             new_referral.patient.phone_num,
@@ -263,14 +308,43 @@ void create_referral(patient chosen_patient, GP current_gp) {
             new_referral.ref_purpose, new_referral.language_barrier, new_referral.language, new_referral.GP.name,
             new_referral.GP.title, new_referral.GP.clinic, new_referral.GP.phone_num);
 
-    // Evt. opdel fprintf
     fclose(referrals_send);
+
+
+
+    //Foelgende er en inboks for sendte refs. Tiltænkt som at være et lager for hospitalet.
+    FILE *referrals_send_doc = fopen("referrals_send_doc.csv", "a+");
+    if (referrals_send_doc == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(referrals_send_doc, "\n%d,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
+            new_referral.ref_id,
+            //patient
+            new_referral.patient.CPR, new_referral.patient.name, new_referral.patient.age, new_referral.patient.sex,
+            new_referral.patient.phone_num,
+            //address
+            new_referral.patient.address.zip_code, new_referral.patient.address.city,
+            new_referral.patient.address.street_name, new_referral.patient.address.house_number_etc,
+            //relative
+            new_referral.patient.relative.name, new_referral.patient.relative.phone_num, new_referral.patient.relative.email,
+            //referral info
+            new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_sev, new_referral.diagnosis_desc,
+            new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
+            new_referral.ref_purpose, new_referral.language_barrier, new_referral.language, new_referral.GP.name,
+            new_referral.GP.title, new_referral.GP.clinic, new_referral.GP.phone_num);
+
+    fclose(referrals_send_doc);
 
 }
 
+
+
 void print_referral(referral new_referral){
+    printf("\nReferral ID: %d\n", new_referral.ref_id);
     //CPR
-    printf("CPR of patient:%s\n", new_referral.patient.CPR);
+    printf("CPR of patient: %s\n", new_referral.patient.CPR);
     //Name
     printf("Name of patient: %s\n", new_referral.patient.name);
     //Age - Midlertidig
@@ -423,6 +497,30 @@ void review_referral(referral ref) {
             printf("Input '1' or '2'");
         }
     }
+
+
+    time_node_structure();
+
+    int chosen_day;
+    char chosen_timeslot[5];
+
+    printf("\nChoose a day:\n>");
+    scanf("%d", &chosen_day);
+    printf("\nChoose a timeslot:\n>");
+    scanf("%4s", chosen_timeslot);
+
+    time_update(chosen_day, chosen_timeslot, ref.ref_id);
+
+    delete_from_inbox (ref.ref_id);
+
+}
+//option to see current time schedule
+//access specific referrals for review
+//create time in an available time slot
+
+
+void time_node_structure () {
+
     FILE *fp = fopen("timetable.csv", "r");
     if (fp == NULL) {
         printf("File not accessed");
@@ -449,24 +547,7 @@ void review_referral(referral ref) {
     fclose(fp);
     print_node(&free_timeslots);
 
-    int chosen_day;
-    char chosen_timeslot[5];
-
-    printf("\nChoose a day:\n>");
-    scanf("%d", &chosen_day);
-    printf("\nChoose a timeslot:\n>");
-    scanf("%4s", chosen_timeslot);
-
-    time_update(chosen_day, chosen_timeslot);
-
-
-
-
-
 }
-//option to see current time schedule
-//access specific referrals for review
-//create time in an available time slot
 
 
 void add_node_timeslot(nodelist* list, int day, char* time){
@@ -510,7 +591,7 @@ void chomp(char *s) {
     *s = 0;
 }
 
-int time_update (int chosen_day, char chosen_time[]) {
+int time_update (int chosen_day, char chosen_time[], int ref_id) {
     FILE *srcFile = fopen("timetable.csv", "r");
     FILE *destFile = fopen("temp_timetable.csv", "w");
     if (!srcFile || !destFile) {
@@ -518,30 +599,29 @@ int time_update (int chosen_day, char chosen_time[]) {
         return -1;
     }
 
-    char line[MAX_LINE_LENGTH];
+    char line[TEST];
     int day;
-    char times[NUM_TIMES][6];  // Array til at holde tidspunkterne
+    char times[NUM_TIMES][50];  // Array til at holde tidspunkterne
     int found = 0;
 
 
     while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
         chomp(line);
-        if (sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
+        sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
                    &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
-                   times[10], times[11], times[12], times[13], times[14])) {
-            char full_time[7];
-            sprintf(full_time, "%sa", chosen_time);
+                   times[10], times[11], times[12], times[13], times[14]);
+        char full_time[7];
+        sprintf(full_time, "%sa", chosen_time);
 
-            if (day == chosen_day) {
-                for (int i = 0; i < NUM_TIMES; i++) {
-                    if (strcmp(times[i], full_time) == 0) {
-                        sprintf(times[i], "%so", chosen_time);
-                        found = 1;
-                        sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
-                                times[3], times[4], times[5], times[6], times[7], times[8], times[9],
-                                times[10], times[11], times[12], times[13], times[14]); // Opdaterer linjen
-                        break; // Stopper ved første match.
-                    }
+        if (day == chosen_day) {
+            for (int i = 0; i < NUM_TIMES; i++) {
+                if (strcmp(times[i], full_time) == 0) {
+                    sprintf(times[i], "%so%d", chosen_time, ref_id);
+                    found = 1;
+                    sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
+                            times[3], times[4], times[5], times[6], times[7], times[8], times[9],
+                            times[10], times[11], times[12], times[13], times[14]); // Opdaterer linjen
+                    break; // Stopper ved første match.
                 }
             }
         }
@@ -654,18 +734,59 @@ int edit_patient_info() {
         chomp(line);
         sscanf(line, "%[^,]", cpr);
         //printf("\nTest cpr: %s", cpr);
-        if(strcmp(target_cpr, cpr) == 0){
-            sprintf(line, "%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s", return_patient.CPR, return_patient.name, return_patient.age,
-                    return_patient.sex, return_patient.phone_num, return_patient.address.zip_code, return_patient.address.city,
+        if(strcmp(target_cpr, cpr) == 0) {
+            sprintf(line, "%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s", return_patient.CPR, return_patient.name,
+                    return_patient.age,
+                    return_patient.sex, return_patient.phone_num, return_patient.address.zip_code,
+                    return_patient.address.city,
                     return_patient.address.street_name, return_patient.address.house_number_etc,
                     return_patient.relative.name, return_patient.relative.phone_num, return_patient.relative.email);
             //fseek(destFile, -strlen(line), SEEK_CUR);
-            fprintf(destFile, "%s\n", line);
+            fprintf(destFile, "\n%s", line);
             found = 1;
+        } else if (strcmp(cpr, "CPR") == 0) {
+            fprintf(destFile, "%s", line);
         } else {
-            fprintf(destFile, "%s\n", line);
+            fprintf(destFile, "\n%s", line);
         }
     }
+
+    //SKAL TESTES SENERE
+
+//    // Move to the end of the file
+//    fseek(destFile, 0, SEEK_END);
+//    int fileSize = ftell(destFile);
+//    printf("TEST: %d", fileSize);
+//
+//    // Check and remove newline
+//    fseek(destFile, -1, SEEK_END); // Go back one character
+//    if (fgetc(destFile) == '\n') {
+//        fseek(destFile, -1, SEEK_END);
+//        ftruncate(fileno(destFile), fileSize - 1);
+//    }
+
+
+
+// Get the file descriptor
+//    int fd = _fileno(destFile);
+//
+//    // Find the size of the file
+//    fseek(destFile, 0, SEEK_END);
+//    long fileSize = ftell(destFile);
+//
+//    // Check the last character
+//    fseek(destFile, -1, SEEK_END);
+//    int lastChar = fgetc(destFile);
+//    if (lastChar == '\n') {
+//        // Resize the file to remove the last character
+//        if (_chsize(fd, fileSize - 1) != 0) {
+//            perror("Error truncating file");
+//            fclose(destFile);
+//            return -1;
+//        }
+//    }
+
+
 
     fclose(srcFile);
     fclose(destFile);
@@ -686,7 +807,7 @@ int edit_patient_info() {
 }
 
 
-referral referral_inbox() {
+referral referral_inbox(int* ref_returned) {
 
     char line[TEST];
 
@@ -709,23 +830,24 @@ referral referral_inbox() {
 
 
     while(fgets(line, TEST, fp)) {
-        sscanf(line, "%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
+        sscanf(line, "%d,%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
                      "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
-                //patient
-               array[i].patient.CPR, array[i].patient.name,
-               &array[i].patient.age, &array[i].patient.sex,
-               array[i].patient.phone_num,
-                //address
-               array[i].patient.address.zip_code, array[i].patient.address.city,
-               array[i].patient.address.street_name, array[i].patient.address.house_number_etc,
-                //relative
-               array[i].patient.relative.name, array[i].patient.relative.phone_num, array[i].patient.relative.email,
-                //referral info
-               &array[i].ref_dest, &array[i].diagnosis_cat, &array[i].diagnosis_sev, array[i].diagnosis_desc,
-               array[i].short_anamnesis, array[i].results, array[i].res_bact, array[i].handicap,
-               array[i].ref_purpose, &array[i].language_barrier, array[i].language, array[i].GP.name,
-               array[i].GP.title, array[i].GP.clinic, array[i].GP.phone_num);
-        printf("\nTEST: %s\n", array[i].diagnosis_desc);
+           &array[i].ref_id,
+           //patient
+           array[i].patient.CPR, array[i].patient.name,
+           &array[i].patient.age, &array[i].patient.sex,
+           array[i].patient.phone_num,
+           //address
+           array[i].patient.address.zip_code, array[i].patient.address.city,
+           array[i].patient.address.street_name, array[i].patient.address.house_number_etc,
+           //relative
+           array[i].patient.relative.name, array[i].patient.relative.phone_num, array[i].patient.relative.email,
+           //referral info
+           &array[i].ref_dest, &array[i].diagnosis_cat, &array[i].diagnosis_sev, array[i].diagnosis_desc,
+           array[i].short_anamnesis, array[i].results, array[i].res_bact, array[i].handicap,
+           array[i].ref_purpose, &array[i].language_barrier, array[i].language, array[i].GP.name,
+           array[i].GP.title, array[i].GP.clinic, array[i].GP.phone_num);
+        //printf("\nTEST: %d\n", array[i].ref_id);
         i++;
     }
 
@@ -745,15 +867,16 @@ referral referral_inbox() {
 
         for (int j = 0; j < amount_ref; ++j) {
             printf("\nREFERRAL NO. %d", j+1);
-            printf("\nCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
-                   array[j].patient.CPR, array[j].patient.name, array[j].diagnosis_cat, array[j].diagnosis_sev);
+            printf("\nREFERRAL ID: %d\tCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
+                   array[j].ref_id, array[j].patient.CPR, array[j].patient.name,
+                   array[j].diagnosis_cat, array[j].diagnosis_sev);
             //print_referral(array[j]);
 
         }
 
-        char target_id[13];
+        int target_id;
         int sort_choice;
-        char create_ref;
+        int create_ref;
         printf("\nDo you want to sort referrals?\n1 - Severity\t2 - Zip Code\t-1 - Exit"
                "\nDo you want to choose a referral? Press 3\n>");
         scanf("%d", &sort_choice);
@@ -766,26 +889,34 @@ referral referral_inbox() {
                 sort_ref(array, amount_ref, compare_zip);
                 break;
             case 3:
-                printf("\nChoose by CPR/reference ID:\n>");
-                scanf(" %s", target_id);
+                printf("\nChoose by reference ID:\n>");
+                scanf(" %d", &target_id);
                 for (int j = 0; j < amount_ref; ++j) {
-                    if (strcmp(target_id, array[j].patient.CPR) == 0) {
+                    if (target_id == array[j].ref_id) {
                         print_referral(array[j]);
-
-                        printf("\nReview referral for selected patient (y / n):\n>");
-                        scanf(" %c", &create_ref);
-                        if (create_ref == 'n') {
-                            break;
-                        }
-                        else {
+                        printf("\nAccept referral for selected patient (1)\n"
+                               "Send back referral (2)\nForward referral (3)\nNo action (-1)\n>");
+                        scanf("%d", &create_ref);
+                        if (create_ref == 1) {
+                            *ref_returned = 1;
                             return array[j];
+                        }/* else if (create_ref == 2) {
+                            send_back_ref ();
+                            break;
+                        } else if (create_ref == 3) {
+                            forward_ref (); */
+                        else {
+                            printf("\nInvalid input\n");
+                            continue;
                         }
                     }
+
                 }
+                printf("\nInvalid input: ID not found\n");
                 break;
             case -1:
-                cond = 0;
-                break;
+                //cond = 0;
+                return array[0]; //Evt overvej et alternativ
             default:
                 printf("\nInvalid input\n");
         }
@@ -873,14 +1004,14 @@ void GP_main_flow (GP current_gp) {
             case 1:
                 current_patient = search_patient();
                 char choice_ref;
-                printf("Do you want to create a referral for a patient (y/n) Name:%s CPR:%s\n>", current_patient.name,
+                printf("\nDo you want to create a referral for a patient (y/n) Name:%s CPR:%s\n>", current_patient.name,
                        current_patient.CPR);
                 scanf(" %c", &choice_ref);
                 if (choice_ref != 'y') {
                     break;
                 }
                 create_referral(current_patient, current_gp);
-                printf("Do you want to continue (y/n):\n>");
+                printf("Referral created. Do you want to continue (y/n):\n>");
                 scanf(" %c", &choice_ref);
                 if (choice_ref != 'y') {
                     exit = 0;
@@ -904,6 +1035,39 @@ void GP_main_flow (GP current_gp) {
 }
 
 
+void delete_from_inbox (int target_id) {
+
+
+    char line[TEST];
+    int ref_id = 0;
+
+    FILE* src_file = fopen("referrals_send.csv", "r");
+    FILE* dest_file = fopen("referrals_send_temp.csv", "w");
+
+    if (src_file == NULL || dest_file == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    while(fgets(line, TEST, src_file)) {
+        sscanf(line, "%d", &ref_id);
+        if (target_id != ref_id) {
+            fprintf(dest_file, "%s", line);
+        }
+    }
+
+    //Overvej fejlkontrol
+
+    fclose(src_file);
+    fclose(dest_file);
+
+    remove("referrals_send.csv");
+    rename("referrals_send_temp.csv", "referrals_send.csv");
+
+
+}
+
+
 
 void hosp_main_flow (hosp_person current_hosp) {
 
@@ -914,24 +1078,30 @@ void hosp_main_flow (hosp_person current_hosp) {
     referral current_ref;
 
     int exit = 1;
+    int ref_returned;
 
     while (exit == 1) {
         int mode_choice_hosp;
-        printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t3 - Forward Referall\t-1 - Exit\n>");
+        printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t3 - Forward Referral\t-1 - Exit\n>");
         scanf("%d", &mode_choice_hosp);
         switch (mode_choice_hosp) {
             case 1:
-                current_ref = referral_inbox();
-                review_referral(current_ref);
+                current_ref = referral_inbox(&ref_returned);
+                if (ref_returned == 1) {
+                    review_referral(current_ref);
+                }
                 //Når man er i inbox kan man vælge en patient, som fører videre til review referral.
                 // (Evt. i forbindelse med print af ref, kunne man printe bare de kritiske elemenenter, når alle printes.
                 // EVT. ikke print navn ud til at starte med. Der kan printes alder og sygdom mm. men ikke navn eller
                 // andre ting som kan give bias.)
                 break;
             case 2:
+                printf("\n");
+                time_node_structure();
+                printf("\n");
                 break;
-            case 3:
-                break;
+            //case 3:
+                //break;
             case -1:
                 exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
                 break;
@@ -942,3 +1112,10 @@ void hosp_main_flow (hosp_person current_hosp) {
 
 
 }
+
+
+
+//Kirk's Noter
+//Forward referral
+//Send back
+

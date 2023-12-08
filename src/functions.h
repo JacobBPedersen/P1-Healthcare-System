@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <io.h>
 
 
 #define DETAILS_LENGTH 40
@@ -67,6 +68,7 @@ typedef struct patient { //Evt. hent info via cpr.
 } patient;
 
 typedef struct referral {
+    int ref_id;
     patient patient;
     int ref_dest;
     int diagnosis_cat;
@@ -127,11 +129,11 @@ void print_test_personnel_hosp (hosp_person user);
 
 void clear_buffer();
 
-int time_update (int chosen_day, char chosen_time[]);
+int time_update (int chosen_day, char chosen_time[], int ref_id);
 
 int edit_patient_info();
 
-referral referral_inbox ();
+referral referral_inbox (int* ref_returned);
 
 int compare_sev (const void *x_ref, const void *y_ref);
 
@@ -143,8 +145,14 @@ void GP_main_flow (GP current_gp);
 
 void hosp_main_flow (hosp_person current_hosp);
 
+int ref_id_create();
+
 void chomp(char *s);
 
 int cpr_validator(char cpr[CPR_LENGTH]);
+
+void time_node_structure ();
+
+void delete_from_inbox (int ref_id);
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H
