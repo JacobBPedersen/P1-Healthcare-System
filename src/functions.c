@@ -470,6 +470,125 @@ patient create_patient() {
     return new_patient;
 }
 
+node* recommended_timeslot(nodelist list, int days){
+    reverse_list(&list);
+    int recom_day = 1;
+    int number_of_timeslot = list_counter(list.head);
+    node* timeslots = (node*) malloc(number_of_timeslot*sizeof(node));
+    if(timeslots==NULL){
+        printf("Memory allocation failed");
+    }
+    node* temp = list.head->next;
+    //array af tiderne bygges
+    for (int i = 0; i < number_of_timeslot; ++i) {
+        timeslots[i].day = temp->day;
+        strcpy(timeslots[i].time, temp->time);
+        timeslots[i].next = NULL;
+        temp = temp->next;
+    }
+
+    //spredning af tiderne
+    if(days == CANCER_TREATMENT_TIME_FRAME){
+        int day[CANCER_TREATMENT_TIME_FRAME] ={0};
+        //loop der tæller antal tider på dagen
+        for (int i = 0; i < number_of_timeslot; ++i) {
+            for (int j = 0; j < CANCER_TREATMENT_TIME_FRAME; ++j) {
+                if (timeslots[i].day == j + 1) {
+                    day[j] += 1;
+                }
+            }
+        }
+        //akkumulere tider i to halvdele, hvor den vurdere om det skal være i første uge eller anden uge
+        int lower_accumulator = 0, higher_accumulator = 0;
+        for (int i = 0; i < CANCER_TREATMENT_TIME_FRAME /2; ++i) {
+            lower_accumulator += day[i];
+        }
+        for (int i = CANCER_TREATMENT_TIME_FRAME/2; i < CANCER_TREATMENT_TIME_FRAME; ++i) {
+            higher_accumulator += day[i];
+        }
+        //Den tager der hvor der er flest tider for at øge flow
+        if(lower_accumulator>higher_accumulator){
+            //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
+            for (int i = 0; i < CANCER_TREATMENT_TIME_FRAME/2; ++i) {
+                if(day[i]>day[recom_day-1]){
+                    recom_day = i+1;
+                }
+            }
+            for (int i = 0; i < number_of_timeslot; ++i) {
+                if(timeslots[i].day == recom_day){
+                    return &timeslots[i];
+                }
+            }
+        }else {
+            //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
+            for (int i = CANCER_TREATMENT_TIME_FRAME/2; i < CANCER_TREATMENT_TIME_FRAME; ++i) {
+                if (day[i] > day[recom_day - 1]) {
+                    recom_day = i + 1;
+                }
+            }
+            for (int i = 0; i < number_of_timeslot; ++i) {
+                if (timeslots[i].day == recom_day) {
+                    return &timeslots[i];
+                }
+            }
+        }
+    }else{
+        int day[TREATMENT_TIME_FRAME] ={0};
+        //loop der tæller antal tider på dagen
+        for (int i = 0; i < number_of_timeslot; ++i) {
+            for (int j = 0; j < TREATMENT_TIME_FRAME; ++j) {
+                if (timeslots[i].day == j + 1) {
+                    day[j] += 1;
+                    }
+                }
+            }
+            //akkumulere tider i to halvdele, hvor den vurdere om det skal være i første uge eller anden uge
+            int lower_accumulator = 0, higher_accumulator = 0;
+            for (int i = 0; i < TREATMENT_TIME_FRAME /2; ++i) {
+                lower_accumulator += day[i];
+            }
+            for (int i = TREATMENT_TIME_FRAME/2; i < TREATMENT_TIME_FRAME; ++i) {
+                higher_accumulator += day[i];
+            }
+            //Den tager der hvor der er flest tider for at øge flow
+            if(lower_accumulator>higher_accumulator){
+                //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
+                for (int i = 0; i < TREATMENT_TIME_FRAME; ++i) {
+                    if(day[i]>day[recom_day-1]){
+                        recom_day = i+1;
+                    }
+                }
+                for (int i = 0; i < number_of_timeslot; ++i) {
+                    if(timeslots[i].day == recom_day){
+                        return &timeslots[i];
+                    }
+                }
+            }else {
+                //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
+                for (int i = TREATMENT_TIME_FRAME/2; i < TREATMENT_TIME_FRAME; ++i) {
+                    if (day[i] > day[recom_day - 1]) {
+                        recom_day = i + 1;
+                    }
+                }
+                for (int i = 0; i < number_of_timeslot; ++i) {
+                    if (timeslots[i].day == recom_day) {
+                        return &timeslots[i];
+                    }
+                }
+            }
+    }
+}
+
+
+//recursiv optælling af listen
+int list_counter(node* current){
+    if(current == NULL){
+        //hovedet trækkes fra
+        return -1;
+    }else{
+        return 1 + list_counter(current->next);
+    }
+}
 
 void review_referral(referral ref) {
     print_referral(ref);
@@ -485,15 +604,11 @@ void review_referral(referral ref) {
     }
     if (choice == 'n') {
     }
-    printf("Do you wish to manually schedule a timeslot(1) or receive a recommendation(2)?\n"
-           "choose 1 for manual or 2 for recommended timeslot\n");
-    while (1) {
-        scanf(" %c", &choice);
-        if (choice == '1' || choice == '2') {
-            break;
-        } else {
-            printf("Input '1' or '2'");
-        }
+    int days;
+    if(ref.diagnosis_cat == cancer){
+        days = CANCER_TREATMENT_TIME_FRAME;
+    }else{
+        days = TREATMENT_TIME_FRAME;
     }
 
 
@@ -529,7 +644,7 @@ void time_node_structure () {
     int day;
     nodelist free_timeslots = {NULL};
     char time_slot_avaliable;
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < days; ++i) {
         fscanf(fp, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],"
                    "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", &day, time[0], time[1],
                time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9], time[10], time[11],
@@ -545,10 +660,36 @@ void time_node_structure () {
     fclose(fp);
     print_node(&free_timeslots);
 
+  
+    node* recomded_time_slot = recommended_timeslot(free_timeslots, days);
+    printf("\nRecommended timeslot is: Day %d - Time: %s\n", recomded_time_slot->day,recomded_time_slot->time);
+    int chosen_day;
+    char chosen_timeslot[5];
+    printf("If you wish to manually schedule a timeslot press 1, else if you wish to schedule the recommended time press 2\n");
+    while (1) {
+    scanf(" %c", &choice);
+        if (choice == '1' || choice == '2') {
+            break;
+        } else {
+            printf("Input '1' or '2'");
+        }
+    }
+    if(choice == '1'){
+        printf("\nChoose a day:\n>");
+        scanf("%d", &chosen_day);
+        printf("\nChoose a timeslot:\n>");
+        scanf("%4s", chosen_timeslot);
+        time_update(chosen_day, chosen_timeslot);
+    } else{
+        time_update(recomded_time_slot->day,recomded_time_slot->time);
+    }
+
+
+
 }
 
 
-void add_node_timeslot(nodelist* list, int day, char* time){
+node* add_node_timeslot(nodelist* list, int day, char* time){
     node* new_node = (node*) malloc(sizeof(node));
     if(new_node==NULL){
         printf("No memory - goodbye\n");
@@ -562,13 +703,41 @@ void add_node_timeslot(nodelist* list, int day, char* time){
     list->head = new_node;
 }
 
-void print_node(nodelist* list){
+void reverse_list(nodelist* list) {
+    node* prev = NULL;
     node* current = list->head;
-    while(current != NULL){
-        printf("Day %d - Time: %s\t",current->day, current->time);
+    node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    list->head = prev;
+}
+
+void print_node(nodelist* list) {
+    reverse_list(list);
+
+    node* current = list->head;
+    int prevDay = -1;
+
+    while (current != NULL) {
+        if (current->day != prevDay) {
+            printf("\n");
+            printf("Day %d\nTime: %s  ", current->day, current->time);
+        } else {
+            printf("Time: %s  ", current->time);
+        }
+
+        prevDay = current->day;
         current = current->next;
     }
+    reverse_list(list);
 }
+
+
 
 
 void print_test_personnel_gp (struct GP user) {
