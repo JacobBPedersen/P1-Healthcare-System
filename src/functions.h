@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <io.h>
 
 #define CANCER_TREATMENT_TIME_FRAME 14
 #define TREATMENT_TIME_FRAME 60
@@ -70,6 +71,7 @@ typedef struct patient { //Evt. hent info via cpr.
 } patient;
 
 typedef struct referral {
+    int ref_id;
     patient patient;
     int ref_dest;
     int diagnosis_cat;
@@ -99,42 +101,42 @@ typedef struct nodelist{
 node* add_node_timeslot(nodelist* list, int day, char* time);
 void print_reverse_order(node* current);
 
-
 node* recommended_timeslot(nodelist list, int days);
 int list_counter(node* current);
 
+void print_node(nodelist* list); // done
 
 //Prototypes of functions:
 
-char *search_first(char *cpr, FILE *file);
+char *search_first(char *cpr, FILE *file); //done
 
-GP GP_user();
+GP GP_user(); // done
 
-hosp_person hosp_user ();
+hosp_person hosp_user (); // done
 
-void user_cred(int* GP_or_Hosp);
+void user_cred(int* GP_or_Hosp); // ?
 
-patient search_patient();
+patient search_patient(); // done
 
 void create_referral(patient chosen_patient, GP current_gp);
 
 void print_referral(referral new_referral);
 
-patient create_patient();
+patient create_patient(); //done
 
 void review_referral(referral ref);
 
-void print_test_personnel_gp (GP user); // test
+void print_test_personnel_gp (GP user);
 
 void print_test_personnel_hosp (hosp_person user);
 
 void clear_buffer();
 
-int time_update (int chosen_day, char chosen_time[]);
+int time_update (int chosen_day, char chosen_time[], int ref_id);
 
 int edit_patient_info();
 
-referral referral_inbox ();
+referral referral_inbox (int* ref_returned);
 
 int compare_sev (const void *x_ref, const void *y_ref);
 
@@ -146,9 +148,15 @@ void GP_main_flow (GP current_gp);
 
 void hosp_main_flow (hosp_person current_hosp);
 
+int ref_id_create();
+
 void chomp(char *s);
 
-int cpr_validator(char cpr[CPR_LENGTH]);
+int cpr_validator(char cpr[CPR_LENGTH]); //done
+
+void time_node_structure ();
+
+void delete_from_inbox (int ref_id);
 
 void print_node(nodelist* list);
 void reverse_list(nodelist* list);

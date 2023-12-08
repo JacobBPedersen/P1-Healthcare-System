@@ -10,6 +10,8 @@ int main()
     //review_referral(new_test);
 
 
+    //ref_id_create();
+
 
     user_cred(&GP_or_Hosp);
 
@@ -21,8 +23,6 @@ int main()
         current_hosp = hosp_user();
         hosp_main_flow(current_hosp);
     }
-
-
 
 
 

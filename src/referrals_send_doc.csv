@@ -1,3 +1,5 @@
+1,101010-1010,Hans Madsen,35,m,+4530303030,7900,Nykoebing,Fruevej,12,John,+4512121212,john@gmail.com,1,7,1,test,testa,testb,testc,testd,teste,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+2,323232-3232,John Mogensen,45,m,+4530303030,7950,Vester Joelby,Vestervej,43,Mogens,+4560606060,mogens@hotmail.dk,1,7,7,testa,testm,testh,testq,testh,testw,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 3,234567-8901,Johan Sorensen,33,M,+4523456789,2100,Koebenhavn,Oestergade,16B,Thomas Moeller,+4587654322,thomas@example.com,2,1,3,"Synsproblemer","Svaer hovedpine og slorret syn","Optisk undersoegelse normal","Ingen fund","Ingen kendte handicap","Oejenundersoegelse",0,Dansk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 4,345678-9012,Karen Madsen,26,K,+4534567891,2730,Herlev,Vestergade,22C,Anna Hansen,+4512345679,anna@example.com,1,7,1,"Allergiske reaktioner","Hyppige nysen og klae i oejnene","Allergitest positiv","Pollen allergi","Ingen kendte handicap","Allergibehandling",1,Engelsk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 5,456789-0123,Peter Thomsen,48,M,+4545678902,3460,Birkerod,Nordvej,30D,Mette Rasmussen,+4598765433,mette@example.com,1,7,7,"Hudirritation","Roedme og kloee","Hudproever normale","Eksem fundet","Psoriasis","Dermatologisk vurdering",0,Dansk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
@@ -7,4 +9,6 @@
 9,333333-3333,Jurgen,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com,2,3,4,test,test,test,test,test,test,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 10,333333-3333,Jurgen,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com,4,3,5,test,tet,test,test,test,test,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 11,333333-3333,Jurgen,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com,5,2,1,test,test,test,test,test,test,1,test,Niels Nielsen,Secretary,Nordlaege,+4500000000
+12,333333-3333,Umba,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com,2,2,3,asd,asd,asd,ads,ad,asd,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 13,333333-3333,Umba,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com,2,2,0,asd,asd,asd,asd,asd,asd,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+14,333333-3333,Umba,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com,2,3,1,dfd,fdf,fdfd,fddf,fdfd,fdfd,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
