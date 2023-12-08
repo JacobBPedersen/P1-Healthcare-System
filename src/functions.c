@@ -591,7 +591,7 @@ int list_counter(node* current){
 }
 
 void review_referral(referral ref) {
-    print_referral(ref);
+
     printf("\nDo you wish to schedule a timeslot for the patient? (y/n)\n"); //access all referrals - sort either through prioritization or chronologically
     char choice = ' ';
     while (1) {
@@ -602,29 +602,32 @@ void review_referral(referral ref) {
             printf("Input 'y' or 'n'\n");
         }
     }
-    if (choice == 'n') {
+
+    if (choice == 'y') {
+
+        int days;
+        if (ref.diagnosis_cat == cancer) {
+            days = CANCER_TREATMENT_TIME_FRAME;
+        } else {
+            days = TREATMENT_TIME_FRAME;
+        }
+
+
+        time_node_structure(days, ref.ref_id);
+
+//        int chosen_day;
+//        char chosen_timeslot[5];
+//
+//        printf("\nChoose a day:\n>");
+//        scanf("%d", &chosen_day);
+//        printf("\nChoose a timeslot:\n>");
+//        scanf("%4s", chosen_timeslot);
+//
+//        time_update(chosen_day, chosen_timeslot, ref.ref_id);
+
+        delete_from_inbox(ref.ref_id);
+
     }
-    int days;
-    if(ref.diagnosis_cat == cancer){
-        days = CANCER_TREATMENT_TIME_FRAME;
-    }else{
-        days = TREATMENT_TIME_FRAME;
-    }
-
-
-    time_node_structure();
-
-    int chosen_day;
-    char chosen_timeslot[5];
-
-    printf("\nChoose a day:\n>");
-    scanf("%d", &chosen_day);
-    printf("\nChoose a timeslot:\n>");
-    scanf("%4s", chosen_timeslot);
-
-    time_update(chosen_day, chosen_timeslot, ref.ref_id);
-
-    delete_from_inbox (ref.ref_id);
 
 }
 //option to see current time schedule
@@ -632,7 +635,9 @@ void review_referral(referral ref) {
 //create time in an available time slot
 
 
-void time_node_structure () {
+void time_node_structure (int days, int ref_id) {
+
+    char choice;
 
     FILE *fp = fopen("timetable.csv", "r");
     if (fp == NULL) {
@@ -660,30 +665,31 @@ void time_node_structure () {
     fclose(fp);
     print_node(&free_timeslots);
 
-  
-    node* recomded_time_slot = recommended_timeslot(free_timeslots, days);
-    printf("\nRecommended timeslot is: Day %d - Time: %s\n", recomded_time_slot->day,recomded_time_slot->time);
-    int chosen_day;
-    char chosen_timeslot[5];
-    printf("If you wish to manually schedule a timeslot press 1, else if you wish to schedule the recommended time press 2\n");
-    while (1) {
-    scanf(" %c", &choice);
-        if (choice == '1' || choice == '2') {
-            break;
-        } else {
-            printf("Input '1' or '2'");
+    if (ref_id != 0) {
+        node *recomded_time_slot = recommended_timeslot(free_timeslots, days);
+        printf("\nRecommended timeslot is: Day %d - Time: %s\n", recomded_time_slot->day, recomded_time_slot->time);
+        int chosen_day;
+        char chosen_timeslot[5];
+        printf("If you wish to manually schedule a timeslot press 1, else if you wish to schedule the recommended time press 2\n");
+        while (1) {
+            scanf(" %c", &choice);
+            if (choice == '1' || choice == '2') {
+                break;
+            } else {
+                printf("Input '1' or '2'");
+            }
         }
-    }
-    if(choice == '1'){
-        printf("\nChoose a day:\n>");
-        scanf("%d", &chosen_day);
-        printf("\nChoose a timeslot:\n>");
-        scanf("%4s", chosen_timeslot);
-        time_update(chosen_day, chosen_timeslot);
-    } else{
-        time_update(recomded_time_slot->day,recomded_time_slot->time);
-    }
+        if (choice == '1') {
+            printf("\nChoose a day:\n>");
+            scanf("%d", &chosen_day);
+            printf("\nChoose a timeslot:\n>");
+            scanf("%4s", chosen_timeslot);
+            time_update(chosen_day, chosen_timeslot, ref_id);
+        } else {
+            time_update(recomded_time_slot->day, recomded_time_slot->time, ref_id);
+        }
 
+    }
 
 
 }
@@ -1251,6 +1257,7 @@ void hosp_main_flow (hosp_person current_hosp) {
         int mode_choice_hosp;
         printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t3 - Forward Referral\t-1 - Exit\n>");
         scanf("%d", &mode_choice_hosp);
+        clear_buffer();
         switch (mode_choice_hosp) {
             case 1:
                 current_ref = referral_inbox(&ref_returned);
@@ -1264,7 +1271,7 @@ void hosp_main_flow (hosp_person current_hosp) {
                 break;
             case 2:
                 printf("\n");
-                time_node_structure();
+                time_node_structure(TREATMENT_TIME_FRAME, 0);
                 printf("\n");
                 break;
             //case 3:

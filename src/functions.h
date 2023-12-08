@@ -154,7 +154,7 @@ void chomp(char *s);
 
 int cpr_validator(char cpr[CPR_LENGTH]); //done
 
-void time_node_structure ();
+void time_node_structure (int days, int ref_id);
 
 void delete_from_inbox (int ref_id);
 
