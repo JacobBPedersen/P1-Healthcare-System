@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+#define CANCER_TREATMENT_TIME_FRAME 14
+#define TREATMENT_TIME_FRAME 60
 #define DETAILS_LENGTH 40
 #define PHONE_NUM 13
 #define CPR_LENGTH 12
@@ -25,8 +26,7 @@ enum Hospital_hoved {Amager = 33, Bispenbjerg, Bornholm, Frederiksberg, Gentofte
 
 
 
-enum diagnosis{rhino_virus, cough, flue,whooping_cough_adult,acute_child_bronchitis, asthma,whooping_cough_infant,
-        COPD, pulmonary_clot, cystic_fibrosis,cancer};
+enum diagnosis{rhino_virus, cough, flue,acute_child_bronchitis, asthma, COPD, pulmonary_clot,cancer};
 
 typedef struct address {
     char zip_code[5];
@@ -100,8 +100,8 @@ node* add_node_timeslot(nodelist* list, int day, char* time);
 void print_reverse_order(node* current);
 
 
-
-
+node* recommended_timeslot(nodelist list, int days);
+int list_counter(node* current);
 
 
 //Prototypes of functions:
