@@ -1,7 +1,7 @@
 CPR,name,age,sex,phone_number,zip-code,city,street_name,house_number,rel_name,rel_phone_number,rel_email
-101010-1010,test1,35,m,+4530303030,7900,Nykoebing,Fruevej,12,John,+4512121212,john@gmail.com
-323232-3232,John,45,m,+4530303030,7950,Vester Joelby,Vestervej,43,Mogens,+4560606060,mogens@hotmail.dk
-121212-1212,Karlena,64,f,+4590909090,6500,Slagelse,Slogensvej,12,Tune,+4501010101,Tune@smail.com
-333333-3333,Umba,56,m,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com
-090909-9090,Karlo,23,m,+4591919191,7940,Assels,Assevej,15,Jun,+4560606060,jun@gmail.com
-787878-7878,Tumme,45,m,+4513131313,8000,Husum,husumvej,14,jane,+451231331,jane@test.com
+101010-1010,Karsten Laursen,35,m,+4530303030,7900,Nykoebing,Fruevej,12,John,+4512121212,john@gmail.com
+323232-3232,John Tram,45,m,+4530303030,7950,Vester Joelby,Vestervej,43,Mogens,+4560606060,mogens@hotmail.dk
+121212-1212,Josefine Dam,64,f,+4590909090,6500,Slagelse,Slogensvej,12,Tune,+4501010101,Tune@smail.com
+333333-3333,Ulla Madsen,56,f,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com
+090909-9090,Karl Kristensen,23,m,+4591919191,7940,Assels,Assevej,15,Jun,+4560606060,jun@gmail.com
+787878-7878,Jens Petersen,45,m,+4513131313,8000,Husum,husumvej,14,jane,+451231331,jane@test.com
