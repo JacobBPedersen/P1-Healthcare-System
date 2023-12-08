@@ -129,12 +129,19 @@ void test_print_node(){
 int main() {
 
     //test_create_patient();
+
     //test_cpr_validator();
+
     //test_search_first();
+
     //test_GP_USER();
+
     //test_hosp_user();
+
     //test_search_patient();
+
     //test_add_node_timeslot();
+
     //test_print_node();
 
     return 0;
