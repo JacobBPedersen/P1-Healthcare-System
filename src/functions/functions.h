@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <io.h>
 
 #define CANCER_TREATMENT_TIME_FRAME 14
 #define TREATMENT_TIME_FRAME 60
@@ -11,7 +10,6 @@
 #define PHONE_NUM 13
 #define CPR_LENGTH 12
 #define NUMBER_OF_TIMESLOTS 15
-//Updating timetable
 #define MAX_LINE_LENGTH 150
 #define NUM_TIMES 15  // Antallet af tidspunkter i hver linje
 #define TEST 400
@@ -26,8 +24,12 @@ enum Hospital_hoved {Amager = 33, Bispenbjerg, Bornholm, Frederiksberg, Gentofte
         Frederikssund, Hilleroed, Helsingoer, Glostrup};
 
 
-
 enum diagnosis{rhino_virus, cough, flue,acute_child_bronchitis, asthma, COPD, pulmonary_clot,cancer};
+
+
+/***********************
+ * STRUCTS FOR PROGRAM *
+ ***********************/
 
 typedef struct address {
     char zip_code[5];
@@ -59,7 +61,7 @@ typedef struct relative {
     char email [DETAILS_LENGTH];
 } relative;
 
-typedef struct patient { //Evt. hent info via cpr.
+typedef struct patient {
     char CPR[CPR_LENGTH];
     char name[DETAILS_LENGTH];
     // Date format
@@ -85,9 +87,9 @@ typedef struct referral {
     int language_barrier;
     char language[DETAILS_LENGTH];
     GP GP;
-    // char* preference; Evt. ikke anvendelig da de ikke selv skal prioritere.
 } referral;
 
+/// Struct for linked lists:
 typedef struct node{
     int day;
     char time[5];
@@ -98,67 +100,58 @@ typedef struct nodelist{
     node* head;
 }nodelist;
 
-node* add_node_timeslot(nodelist* list, int day, char* time);
-void print_reverse_order(node* current);
 
-node* recommended_timeslot(nodelist list, int days);
-int list_counter(node* current);
 
-void print_node(nodelist* list); // done
 
-//Prototypes of functions:
+/****************************
+ * PROTOTYPES FOR FUNCTIONS *
+ ****************************/
 
-char *search_first(char *cpr, FILE *file); //done
 
-GP GP_user(); // done
-
-hosp_person hosp_user (); // done
-
-void user_cred(int* GP_or_Hosp); // ?
-
-patient search_patient(); // done
-
-void create_referral(patient chosen_patient, GP current_gp);
-
-void print_referral(referral new_referral);
-
-patient create_patient(); //done
-
-void review_referral(referral ref);
-
-void print_test_personnel_gp (GP user);
-
-void print_test_personnel_hosp (hosp_person user);
-
-void clear_buffer();
-
-int time_update (int chosen_day, char chosen_time[], int ref_id);
-
-int edit_patient_info();
-
-referral referral_inbox (int* ref_returned);
-
-int compare_sev (const void *x_ref, const void *y_ref);
-
-void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
-
-int compare_zip (const void *x_ref, const void *y_ref);
-
+/// Main workflow function prototypes:
 void GP_main_flow (GP current_gp);
-
 void hosp_main_flow (hosp_person current_hosp);
 
+/// User credential function prototypes:
+void user_cred(int* GP_or_Hosp);
+GP GP_user();
+hosp_person hosp_user ();
+
+/// Utility function prototypes:
+    // Search functions:
+char *search_first(char *cpr, FILE *file);
+    // String and input manipulation:
+void clear_buffer();
+void chomp(char *s);
+    // Print functions:
+void print_referral(referral new_referral);
+void print_user_gp (GP user);
+void print_user_hosp (hosp_person user);
+void print_node(nodelist* list);
+    // Input validation / validation function prototypes:
+int cpr_validator(char cpr[CPR_LENGTH]);
+
+/// GP function prototypes:
+void create_referral(patient chosen_patient, GP current_gp);
+patient search_patient();
+patient create_patient();
+int edit_patient_info();
 int ref_id_create();
 
-void chomp(char *s);
-
-int cpr_validator(char cpr[CPR_LENGTH]); //done
-
+/// Hospital function prototypes:
 void time_node_structure (int days, int ref_id);
-
 void delete_from_inbox (int ref_id);
-
-void print_node(nodelist* list);
 void reverse_list(nodelist* list);
+node* add_node_timeslot(nodelist* list, int day, char* time);
+node* recommended_timeslot(nodelist list, int days);
+int list_counter(node* current);
+void review_referral(referral ref);
+int time_update (int chosen_day, char chosen_time[], int ref_id);
+referral referral_inbox (int* ref_returned);
+    // Sorting function prototypes, utilized by referral_inbox:
+void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
+int compare_sev (const void *x_ref, const void *y_ref);
+int compare_zip (const void *x_ref, const void *y_ref);
+
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H

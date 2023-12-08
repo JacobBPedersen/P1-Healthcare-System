@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "../src/functions.h"
+#include "../src/functions/functions.h"
 
 void test_create_patient() {
 
