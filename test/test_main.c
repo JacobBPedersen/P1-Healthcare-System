@@ -27,7 +27,7 @@ void test_cpr_validator(){
     int test6 = cpr_validator("!#€%&/()=?`");
 
     assert(test1 == 0);
-    //assert(test2 == 1); // creates error
+    assert(test2 == 1);
     assert(test3 == 1);
     assert(test4 == 0);
     assert(test5 == 1);
@@ -130,7 +130,7 @@ int main() {
 
     //test_create_patient();
 
-    //test_cpr_validator();
+    test_cpr_validator();
 
     //test_search_first();
 
