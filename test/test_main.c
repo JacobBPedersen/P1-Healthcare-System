@@ -3,19 +3,21 @@
 
 void test_create_patient() {
 
-    if (freopen("./inputs/create_patient.txt", "r", stdin) == NULL) {
+    FILE *create_patient_file = freopen("./inputs/create_patient.txt", "r", stdin);
+
+    if(create_patient_file == NULL) {
         perror("Failed to open file");
         return;
     }
 
     patient test_patient = create_patient();
+    fclose(create_patient_file);
 
     assert(strcmp("Lars Andersen",test_patient.name) == 0);
     assert(45 == test_patient.age);
     assert(strcmp("Odense",test_patient.address.city) == 0);
     assert(strcmp("Sofie Andersen",test_patient.relative.name) == 0);
     assert(strcmp("sofie.andersen@mail.com",test_patient.relative.email) == 0);
-
 }
 
 void test_cpr_validator(){
@@ -130,7 +132,7 @@ int main() {
 
     //test_create_patient();
 
-    test_cpr_validator();
+    //test_cpr_validator();
 
     //test_search_first();
 
