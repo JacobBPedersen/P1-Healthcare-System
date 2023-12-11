@@ -127,6 +127,7 @@ hosp_person hosp_user ();
     // Search functions:
 char *search_first(char *cpr, FILE *file);
 int line_count_file(FILE* fp);
+referral search_ref ();
     // String and input manipulation:
 void clear_buffer();
 void chomp(char *s);
@@ -157,6 +158,9 @@ int time_update (int chosen_day, char chosen_time[], int ref_id);
 referral referral_inbox (int* ref_returned);
 void return_referral(referral declined_ref);
 void forward_referral (referral declined_ref);
+void handle_appointment();
+void reschedule_appointment();
+int time_delete (int chosen_day, char chosen_time[], int ref_id);
     // Sorting function prototypes, utilized by referral_inbox:
 void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
 int compare_sev (const void *x_ref, const void *y_ref);

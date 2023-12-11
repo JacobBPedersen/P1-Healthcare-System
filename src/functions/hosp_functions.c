@@ -146,16 +146,6 @@ void review_referral(referral ref) {
 
         time_node_structure(days, ref.ref_id);
 
-//        int chosen_day;
-//        char chosen_timeslot[5];
-//
-//        printf("\nChoose a day:\n>");
-//        scanf("%d", &chosen_day);
-//        printf("\nChoose a timeslot:\n>");
-//        scanf("%4s", chosen_timeslot);
-//
-//        time_update(chosen_day, chosen_timeslot, ref.ref_id);
-
         delete_from_inbox(ref.ref_id);
 
     }
@@ -258,16 +248,11 @@ void reverse_list(nodelist* list) {
 
 
 
-
-
-
-
-
 int time_update (int chosen_day, char chosen_time[], int ref_id) {
     FILE *srcFile = fopen("./database/timetable.csv", "r");
     FILE *destFile = fopen("./database/temp_timetable.csv", "w");
     if (!srcFile || !destFile) {
-        perror("Fejl ved åbning af filer");
+        perror("Error opening files");
         return -1;
     }
 
@@ -283,9 +268,9 @@ int time_update (int chosen_day, char chosen_time[], int ref_id) {
                &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
                times[10], times[11], times[12], times[13], times[14]);
         char full_time[7];
-        sprintf(full_time, "%sa", chosen_time);
 
         if (day == chosen_day) {
+            sprintf(full_time, "%sa", chosen_time);
             for (int i = 0; i < NUM_TIMES; i++) {
                 if (strcmp(times[i], full_time) == 0) {
                     sprintf(times[i], "%so%d", chosen_time, ref_id);
@@ -371,8 +356,9 @@ referral referral_inbox(int* ref_returned) {
     fclose(fp);
 
 
-    int cond = 1;
-    while(cond) {
+    *ref_returned = 0;
+
+    while(1) {
 
         for (int j = 0; j < amount_ref; ++j) {
             printf("\nREFERRAL NO. %d", j+1);
@@ -412,19 +398,23 @@ referral referral_inbox(int* ref_returned) {
                         scanf("%d", &ref_mode);
 
                         referral selected_ref = array[j];
-                        free(array);
 
                         if (ref_mode == 1) {
+                            free(array);
                             *ref_returned = 1;
                             return selected_ref;
                         }
                         else if (ref_mode == 2) {
+                            free(array);
                             return_referral(selected_ref);
-                            break;
+                            delete_from_inbox(selected_ref.ref_id);
+                            return (referral){0};
                         }
                         else if (ref_mode == 3) {
+                            free(array);
                             forward_referral(selected_ref);
-                            break;
+                            delete_from_inbox(selected_ref.ref_id);
+                            return (referral){0};
                         }
                         else {
                             printf("\nInvalid input\n");
@@ -435,9 +425,8 @@ referral referral_inbox(int* ref_returned) {
                 printf("\nInvalid input: ID not found\n");
                 break;
             case -1:
-                printf("\nMem gone\n");
                 free(array);
-                return array[0]; //Evt overvej et alternativ
+                return (referral){0};
             default:
                 printf("\nInvalid input\n");
         }
@@ -445,20 +434,7 @@ referral referral_inbox(int* ref_returned) {
 
 }
 
-//IKKE SLETTE
-//    while(fgets(line, TEST, fp)){
-//        printf("\nTEST: %s\n", line);
-//    }
 
-//    int amount;
-//    printf("\nEnter amount of referrals to be printed\n");
-//    scanf("%d", &amount);
-//
-//
-//    for (int i = 0; i < amount; ++i) {
-//        fgets(line, TEST, fp);
-//        printf("\nTEST: %s\n", line);
-//    }
 
 
 int compare_sev (const void *x_ref, const void *y_ref) {
@@ -578,7 +554,7 @@ void forward_referral (referral declined_ref) {
     clear_buffer();
 
 
-    FILE* fp = fopen("forwarded_referrals", "a+");
+    FILE* fp = fopen("./database/forwarded_referrals", "a+");
 
     if (fp == NULL) {
         printf("Error");
@@ -621,7 +597,7 @@ void return_referral(referral declined_ref) {
     clear_buffer();
 
 
-    FILE *fp = fopen("returned_referrals", "a+");
+    FILE *fp = fopen("./database/returned_referrals", "a+");
 
     if (fp == NULL) {
         printf("Error");
@@ -647,7 +623,161 @@ void return_referral(referral declined_ref) {
             declined_ref.ref_purpose, declined_ref.language_barrier, declined_ref.language, declined_ref.GP.name,
             declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num);
 
-
     fclose(fp);
 
 }
+
+
+void handle_appointment () {
+
+    referral found_ref;
+    int cond = 1;
+    while (cond == 1) {
+        int mode;
+        printf("Select mode\n1 - View referral of appointment\t2 - Reschedule or delete appointment\t-1 - Exit\n>");
+        scanf("%d", &mode);
+
+        switch (mode) {
+            case 1:
+                found_ref = search_ref();
+                print_referral(found_ref);
+                break;
+            case 2:
+                reschedule_appointment();
+                break;
+            default:
+                cond = 0;
+        }
+    }
+
+}
+
+void reschedule_appointment () {
+
+    int chosen_day;
+    char chosen_time[6];
+
+    referral chosen_ref;
+
+    printf("Enter the day of the appointment to be rescheduled:\n>");
+    scanf("%d", &chosen_day);
+    printf("\nEnter the clock of the appointment to be rescheduled:\n>");
+    scanf(" %s", chosen_time);
+    chosen_ref = search_ref();
+
+    time_delete (chosen_day, chosen_time, chosen_ref.ref_id);
+
+    int res_choice;
+    printf("\nContinue to reschedule?\n1 - Yes\t2 - No\n>");
+    scanf("%d", &res_choice);
+
+    if (res_choice == 1) {
+        review_referral(chosen_ref);
+    } else {
+        printf("\nNo rescheduling chosen\n");
+    }
+
+}
+
+
+
+referral search_ref () {
+
+
+    FILE* fp = fopen("./database/referrals_send_doc.csv", "r");
+    char target_id[5];
+    if (fp == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+
+    printf("Choose a referral ID");
+    scanf("%s", target_id);
+
+    char* ref_s = search_first(target_id, fp);
+
+    referral ref;
+
+    sscanf(ref_s, "%d,%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
+                 "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
+           &ref.ref_id,
+            //patient
+           ref.patient.CPR, ref.patient.name,
+           &ref.patient.age, &ref.patient.sex,
+           ref.patient.phone_num,
+            //address
+           ref.patient.address.zip_code, ref.patient.address.city,
+           ref.patient.address.street_name, ref.patient.address.house_number_etc,
+            //relative
+           ref.patient.relative.name, ref.patient.relative.phone_num, ref.patient.relative.email,
+            //referral info
+           &ref.ref_dest, &ref.diagnosis_cat, &ref.diagnosis_sev, ref.diagnosis_desc,
+           ref.short_anamnesis, ref.results, ref.res_bact, ref.handicap,
+           ref.ref_purpose, &ref.language_barrier, ref.language, ref.GP.name,
+           ref.GP.title, ref.GP.clinic, ref.GP.phone_num);
+
+
+    return ref;
+
+}
+
+
+
+int time_delete (int chosen_day, char chosen_time[], int ref_id) {
+    FILE *srcFile = fopen("./database/timetable.csv", "r");
+    FILE *destFile = fopen("./database/temp_timetable.csv", "w");
+    if (!srcFile || !destFile) {
+        perror("Error opening files");
+        return -1;
+    }
+
+    char line[TEST];
+    int day;
+    char times[NUM_TIMES][50];  // Array til at holde tidspunkterne
+    int found = 0;
+
+
+    while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
+        chomp(line);
+        sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
+               &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
+               times[10], times[11], times[12], times[13], times[14]);
+        char full_time[7];
+
+        if (day == chosen_day) {
+            sprintf(full_time, "%so%d", chosen_time, ref_id);
+            for (int i = 0; i < NUM_TIMES; i++) {
+                if (strcmp(times[i], full_time) == 0) {
+                    sprintf(times[i], "%sa", chosen_time);
+                    found = 1;
+                    sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
+                            times[3], times[4], times[5], times[6], times[7], times[8], times[9],
+                            times[10], times[11], times[12], times[13], times[14]); // Opdaterer linjen
+                    break; // Stopper ved første match.
+                }
+            }
+        }
+
+        fprintf(destFile, "%s\n", line);
+    }
+
+    fclose(srcFile);
+    fclose(destFile);
+
+    if (!found) {
+        printf("Day %d and time %s is not found, or not occupied.\n", chosen_day, chosen_time);
+        remove("./database/temp_timetable.csv");
+        return -1;
+    } else {
+        printf("\nAppointment deleted\n");
+        remove("./database/timetable.csv");
+        rename("./database/temp_timetable.csv", "./database/timetable.csv");
+    }
+
+    return 0;
+}
+
+
+
+//NOTE: Der mangler ordentlig udprint ved reschedule.

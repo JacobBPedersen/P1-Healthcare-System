@@ -2,6 +2,8 @@
 
 int main()
 {
+
+
     int GP_or_Hosp;
     GP current_gp;
     hosp_person current_hosp;

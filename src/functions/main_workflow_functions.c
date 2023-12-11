@@ -60,7 +60,7 @@ void hosp_main_flow (hosp_person current_hosp) {
 
     while (exit == 1) {
         int mode_choice_hosp;
-        printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t3 - Forward Referral\t-1 - Exit\n>");
+        printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t-1 - Exit\n>");
         scanf("%d", &mode_choice_hosp);
         clear_buffer();
         switch (mode_choice_hosp) {
@@ -74,9 +74,14 @@ void hosp_main_flow (hosp_person current_hosp) {
                 printf("\n");
                 time_node_structure(TREATMENT_TIME_FRAME, 0);
                 printf("\n");
-                break;
-                //case 3: //
-                //break;
+                int choice;
+                printf("Do you want to view/reschedule appointment?\n1 - Yes\t0 - No");
+                scanf("%d", &choice);
+                if(choice == 1) {
+                    handle_appointment();
+                } else {
+                    break;
+                }
             case -1:
                 exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
                 break;

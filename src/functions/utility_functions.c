@@ -44,9 +44,9 @@ int cpr_validator(char cpr[CPR_LENGTH]){
 
 char *search_first(char *cpr, FILE *file) //Kald funktion search first
 {
-    char buffer[150];
+    char buffer[TEST];
 
-    char return_buffer[150];
+    char return_buffer[TEST];
     char *token;
 
     while (fgets(buffer, sizeof(buffer), file) != NULL)
@@ -170,13 +170,13 @@ void print_node(nodelist* list) {
 
 void print_user_gp (struct GP user) {
 
-    printf("User ID: %s, Name: %s, Title: %s,\nClinic: %s, Phone number: %s", user.id, user.name, user.title, user.clinic, user.phone_num);
+    printf("User ID: %s, Name: %s, Title: %s,\nClinic: %s, Phone number: %s\n", user.id, user.name, user.title, user.clinic, user.phone_num);
 
 }
 
 
 void print_user_hosp (struct hosp_person user) {
 
-    printf("User ID: %s, Name: %s, Title: %s, Location: %s,\nDepartment: %s, Phone number: %s", user.id, user.name, user.title, user.location, user.department, user.phone_num);
+    printf("User ID: %s, Name: %s, Title: %s, Location: %s,\nDepartment: %s, Phone number: %s\n", user.id, user.name, user.title, user.location, user.department, user.phone_num);
 
 }
