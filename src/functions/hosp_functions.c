@@ -319,7 +319,6 @@ int time_update (int chosen_day, char chosen_time[], int ref_id) {
 
 
 
-
 referral referral_inbox(int* ref_returned) {
 
     char line[TEST];
@@ -331,14 +330,19 @@ referral referral_inbox(int* ref_returned) {
         exit(EXIT_FAILURE);
     }
 
-    int amount_ref=0;
-    while(fgets(line, TEST, fp)) {
-        amount_ref++;
+    int amount_ref = line_count_file(fp);
+
+    // Dynamically allocate memory for referrals
+    referral *array = (referral*)malloc(amount_ref * sizeof(referral));
+    if (array == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        fclose(fp);
+        exit(EXIT_FAILURE);
     }
 
     rewind(fp);
 
-    referral array[amount_ref+1];
+    //referral array[amount_ref+1];
     int i = 0;
 
 
@@ -360,19 +364,11 @@ referral referral_inbox(int* ref_returned) {
                array[i].short_anamnesis, array[i].results, array[i].res_bact, array[i].handicap,
                array[i].ref_purpose, &array[i].language_barrier, array[i].language, array[i].GP.name,
                array[i].GP.title, array[i].GP.clinic, array[i].GP.phone_num);
-        //printf("\nTEST: %d\n", array[i].ref_id);
         i++;
     }
 
-    fclose(fp);
 
-//    for (int j = 0; j < amount_ref; ++j) {
-//        printf("\nREFERRAL NO. %d", j+1);
-//        printf("\nCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
-//               array[j].patient.CPR, array[j].patient.name, array[j].diagnosis_cat, array[j].diagnosis_sev);
-//        //print_referral(array[j]);
-//
-//    }
+    fclose(fp);
 
 
     int cond = 1;
@@ -383,15 +379,13 @@ referral referral_inbox(int* ref_returned) {
             printf("\nREFERRAL ID: %d\tCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
                    array[j].ref_id, array[j].patient.CPR, array[j].patient.name,
                    array[j].diagnosis_cat, array[j].diagnosis_sev);
-            //print_referral(array[j]);
-
         }
 
         int target_id;
         int sort_choice;
-        int create_ref;
-        printf("\nDo you want to sort referrals?\n1 - Severity\t2 - Zip Code\t-1 - Exit"
-               "\nDo you want to choose a referral? Press 3\n>");
+        int ref_mode;
+        printf("\nDo you want to sort referrals?\n1 - Severity\t2 - Zip Code\t3 - CPR\t4 - Chronologically (ref ID)\t-1 - Exit"
+               "\nDo you want to choose a referral? \nPress 5\n>");
         scanf("%d", &sort_choice);
 
         switch (sort_choice) {
@@ -402,6 +396,12 @@ referral referral_inbox(int* ref_returned) {
                 sort_ref(array, amount_ref, compare_zip);
                 break;
             case 3:
+                sort_ref(array, amount_ref, compare_cpr);
+                break;
+            case 4:
+                sort_ref(array, amount_ref, compare_ref_id);
+                break;
+            case 5:
                 printf("\nChoose by reference ID:\n>");
                 scanf(" %d", &target_id);
                 for (int j = 0; j < amount_ref; ++j) {
@@ -409,26 +409,34 @@ referral referral_inbox(int* ref_returned) {
                         print_referral(array[j]);
                         printf("\nAccept referral for selected patient (1)\n"
                                "Send back referral (2)\nForward referral (3)\nNo action (-1)\n>");
-                        scanf("%d", &create_ref);
-                        if (create_ref == 1) {
+                        scanf("%d", &ref_mode);
+
+                        referral selected_ref = array[j];
+                        free(array);
+
+                        if (ref_mode == 1) {
                             *ref_returned = 1;
-                            return array[j];
-                        }/* else if (create_ref == 2) {
-                            send_back_ref ();
+                            return selected_ref;
+                        }
+                        else if (ref_mode == 2) {
+                            return_referral(selected_ref);
                             break;
-                        } else if (create_ref == 3) {
-                            forward_ref (); */
+                        }
+                        else if (ref_mode == 3) {
+                            forward_referral(selected_ref);
+                            break;
+                        }
                         else {
                             printf("\nInvalid input\n");
                             continue;
                         }
                     }
-
                 }
                 printf("\nInvalid input: ID not found\n");
                 break;
             case -1:
-                //cond = 0;
+                printf("\nMem gone\n");
+                free(array);
                 return array[0]; //Evt overvej et alternativ
             default:
                 printf("\nInvalid input\n");
@@ -481,6 +489,37 @@ int compare_zip (const void *x_ref, const void *y_ref) {
 
 }
 
+
+int compare_cpr (const void *x_ref, const void *y_ref) {
+
+    referral* x = (referral*)x_ref;
+    referral* y = (referral*)y_ref;
+
+    // Comparing the cpr.
+    if (x->patient.CPR != y->patient.CPR) {
+        return strcmp(x->patient.CPR, y->patient.CPR); // Utilizing string compare to determine order of CPR.
+    } else {
+        return 0;
+    }
+
+}
+
+int compare_ref_id (const void *x_ref, const void *y_ref) {
+
+    referral* x = (referral*)x_ref;
+    referral* y = (referral*)y_ref;
+
+    // Comparing the ref id.
+    if (x->ref_id != y->ref_id) {
+        return (int)y->ref_id - (int)x->ref_id; // Type cast to int, to avoid clang-tidy and conversion errors
+    } else {
+        return 0;
+    }
+
+}
+
+
+
 void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref)) {
 
     qsort(ref_list, size_of_list, sizeof(referral), sort_type);
@@ -518,5 +557,97 @@ void delete_from_inbox (int target_id) {
     remove("./database/referrals_send.csv");
     rename("./database/referrals_send_temp.csv", "./database/referrals_send.csv");
 
+
+}
+
+
+
+void forward_referral (referral declined_ref) {
+
+    return_ref detail;
+    int destination;
+
+    printf("Enter destination");
+    scanf(" %d", &destination);
+    clear_buffer();
+    printf("What are the reason for the decline/return:\n>");
+    scanf("%s", detail.reason);
+    clear_buffer();
+    printf("What recommended action to be carried out:\n>");
+    scanf("%s", detail.action);
+    clear_buffer();
+
+
+    FILE* fp = fopen("forwarded_referrals", "a+");
+
+    if (fp == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(fp, "%d,%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s\n",
+            //Critic
+            destination, detail.reason, detail.action,
+            //declined_ref.ref_id,
+            //patient
+            declined_ref.patient.CPR, declined_ref.patient.name, declined_ref.patient.age, declined_ref.patient.sex,
+            declined_ref.patient.phone_num,
+            //address
+            declined_ref.patient.address.zip_code, declined_ref.patient.address.city,
+            declined_ref.patient.address.street_name, declined_ref.patient.address.house_number_etc,
+            //relative
+            declined_ref.patient.relative.name, declined_ref.patient.relative.phone_num, declined_ref.patient.relative.email,
+            //referral info
+            declined_ref.ref_dest, declined_ref.diagnosis_cat, declined_ref.diagnosis_sev, declined_ref.diagnosis_desc,
+            declined_ref.short_anamnesis, declined_ref.results, declined_ref.res_bact, declined_ref.handicap,
+            declined_ref.ref_purpose, declined_ref.language_barrier, declined_ref.language, declined_ref.GP.name,
+            declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num);
+
+
+    fclose(fp);
+
+}
+
+
+void return_referral(referral declined_ref) {
+
+    return_ref detail;
+
+    printf("What are the reason for the decline/return:\n>");
+    scanf("%s", detail.reason);
+    clear_buffer();
+    printf("What recommended action to be carried out:\n>");
+    scanf("%s", detail.action);
+    clear_buffer();
+
+
+    FILE *fp = fopen("returned_referrals", "a+");
+
+    if (fp == NULL) {
+        printf("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(fp, "%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s\n",
+//Critic
+            detail.reason, detail.action,
+//declined_ref.ref_id,
+//patient
+            declined_ref.patient.CPR, declined_ref.patient.name, declined_ref.patient.age, declined_ref.patient.sex,
+            declined_ref.patient.phone_num,
+//address
+            declined_ref.patient.address.zip_code, declined_ref.patient.address.city,
+            declined_ref.patient.address.street_name, declined_ref.patient.address.house_number_etc,
+//relative
+            declined_ref.patient.relative.name, declined_ref.patient.relative.phone_num,
+            declined_ref.patient.relative.email,
+//referral info
+            declined_ref.ref_dest, declined_ref.diagnosis_cat, declined_ref.diagnosis_sev, declined_ref.diagnosis_desc,
+            declined_ref.short_anamnesis, declined_ref.results, declined_ref.res_bact, declined_ref.handicap,
+            declined_ref.ref_purpose, declined_ref.language_barrier, declined_ref.language, declined_ref.GP.name,
+            declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num);
+
+
+    fclose(fp);
 
 }

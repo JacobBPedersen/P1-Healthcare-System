@@ -62,8 +62,22 @@ char *search_first(char *cpr, FILE *file) //Kald funktion search first
 
     }
 
-
     return "Value not found";
+}
+
+
+
+
+int line_count_file(FILE* fp) {
+
+    char line[TEST];
+    int amount_ref=0;
+    while(fgets(line, TEST, fp)) {
+        amount_ref++;
+    }
+
+    return amount_ref;
+
 }
 
 

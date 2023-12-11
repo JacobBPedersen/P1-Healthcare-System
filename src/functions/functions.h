@@ -89,6 +89,12 @@ typedef struct referral {
     GP GP;
 } referral;
 
+typedef struct return_ref {
+    char reason[DETAILS_LENGTH];
+    char action[DETAILS_LENGTH];
+} return_ref;
+
+
 /// Struct for linked lists:
 typedef struct node{
     int day;
@@ -120,6 +126,7 @@ hosp_person hosp_user ();
 /// Utility function prototypes:
     // Search functions:
 char *search_first(char *cpr, FILE *file);
+int line_count_file(FILE* fp);
     // String and input manipulation:
 void clear_buffer();
 void chomp(char *s);
@@ -148,10 +155,14 @@ int list_counter(node* current);
 void review_referral(referral ref);
 int time_update (int chosen_day, char chosen_time[], int ref_id);
 referral referral_inbox (int* ref_returned);
+void return_referral(referral declined_ref);
+void forward_referral (referral declined_ref);
     // Sorting function prototypes, utilized by referral_inbox:
 void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
 int compare_sev (const void *x_ref, const void *y_ref);
 int compare_zip (const void *x_ref, const void *y_ref);
+int compare_cpr (const void *x_ref, const void *y_ref);
+int compare_ref_id (const void *x_ref, const void *y_ref);
 
 
 #endif //P1_HEALTHCARE_SYSTEM_FUNCTIONS_H
