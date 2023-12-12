@@ -90,8 +90,8 @@ typedef struct referral {
 } referral;
 
 typedef struct return_ref {
-    char reason[DETAILS_LENGTH];
-    char action[DETAILS_LENGTH];
+    char reason[TEST];
+    char action[TEST];
 } return_ref;
 
 

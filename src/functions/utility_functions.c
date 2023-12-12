@@ -87,6 +87,27 @@ int line_count_file(FILE* fp) {
  * PRINT FUNCTIONS *
  *******************/
 
+
+void print_timetable () {
+
+    char line [TEST];
+
+    FILE* fp = fopen("./database/timetable.csv", "r");
+
+    if (fp == NULL) {
+        perror("Error opening timetable");
+        exit(EXIT_FAILURE);
+    }
+
+    while (fgets(line, TEST, fp)) {
+        printf("%s\n", line);
+    }
+
+    fclose(fp);
+
+}
+
+
 void print_referral(referral new_referral){
     printf("\nReferral ID: %d\n", new_referral.ref_id);
     //CPR

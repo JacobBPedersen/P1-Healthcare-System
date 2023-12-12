@@ -73,7 +73,6 @@ void hosp_main_flow (hosp_person current_hosp) {
             case 2:
                 printf("\n");
                 print_timetable();
-                //time_node_structure(TREATMENT_TIME_FRAME, 0);
                 printf("\n");
                 int choice;
                 printf("Do you want to view/reschedule appointment?\n1 - Yes\t0 - No\n>");

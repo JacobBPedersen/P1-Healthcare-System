@@ -1,113 +1,53 @@
 #include "functions.h"
 
 
-node* recommended_timeslot(nodelist list, int days){
+node* recommended_timeslot(nodelist list, int days) {
     reverse_list(&list);
-    int recom_day = 1;
+    int recom_day = 0;
     int number_of_timeslot = list_counter(list.head);
-    node* timeslots = (node*) malloc(number_of_timeslot*sizeof(node));
-    if(timeslots==NULL){
-        printf("Memory allocation failed");
+    int day_count[days];
+    //initializing the counter to zero
+    for (int i = 0; i < days; ++i) {
+        day_count[i] = 0;
     }
-    node* temp = list.head->next;
-    //array af tiderne bygges
-    for (int i = 0; i < number_of_timeslot; ++i) {
-        timeslots[i].day = temp->day;
-        strcpy(timeslots[i].time, temp->time);
-        timeslots[i].next = NULL;
+    //temporary note reading through list
+    node *temp = list.head->next;
+    //Counting time slots and storing number in day_count
+    while (temp != NULL) {
+        day_count[temp->day - 1]++;
         temp = temp->next;
     }
+    //analysing one side to determine which side has most available time slots
+    int lower_accumulator = 0;
 
-    //spredning af tiderne
-    if(days == CANCER_TREATMENT_TIME_FRAME){
-        int day[CANCER_TREATMENT_TIME_FRAME] ={0};
-        //loop der tæller antal tider på dagen
-        for (int i = 0; i < number_of_timeslot; ++i) {
-            for (int j = 0; j < CANCER_TREATMENT_TIME_FRAME; ++j) {
-                if (timeslots[i].day == j + 1) {
-                    day[j] += 1;
-                }
+    for (int i = 0; i < days / 2; ++i) {
+        lower_accumulator += day_count[i];
+    }
+    //if lower accumulator is larger the first half of the days will be run through to find the first least occupied day
+    if (lower_accumulator > number_of_timeslot / 2) {
+        for (int i = 0; i < days / 2; ++i) {
+            if (day_count[i] > day_count[recom_day]) {
+                recom_day = i;
             }
         }
-        //akkumulere tider i to halvdele, hvor den vurdere om det skal være i første uge eller anden uge
-        int lower_accumulator = 0, higher_accumulator = 0;
-        for (int i = 0; i < CANCER_TREATMENT_TIME_FRAME /2; ++i) {
-            lower_accumulator += day[i];
-        }
-        for (int i = CANCER_TREATMENT_TIME_FRAME/2; i < CANCER_TREATMENT_TIME_FRAME; ++i) {
-            higher_accumulator += day[i];
-        }
-        //Den tager der hvor der er flest tider for at øge flow
-        if(lower_accumulator>higher_accumulator){
-            //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
-            for (int i = 0; i < CANCER_TREATMENT_TIME_FRAME/2; ++i) {
-                if(day[i]>day[recom_day-1]){
-                    recom_day = i+1;
-                }
-            }
-            for (int i = 0; i < number_of_timeslot; ++i) {
-                if(timeslots[i].day == recom_day){
-                    return &timeslots[i];
-                }
-            }
-        }else {
-            //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
-            for (int i = CANCER_TREATMENT_TIME_FRAME/2; i < CANCER_TREATMENT_TIME_FRAME; ++i) {
-                if (day[i] > day[recom_day - 1]) {
-                    recom_day = i + 1;
-                }
-            }
-            for (int i = 0; i < number_of_timeslot; ++i) {
-                if (timeslots[i].day == recom_day) {
-                    return &timeslots[i];
-                }
-            }
-        }
-    }else{
-        int day[TREATMENT_TIME_FRAME] ={0};
-        //loop der tæller antal tider på dagen
-        for (int i = 0; i < number_of_timeslot; ++i) {
-            for (int j = 0; j < TREATMENT_TIME_FRAME; ++j) {
-                if (timeslots[i].day == j + 1) {
-                    day[j] += 1;
-                }
-            }
-        }
-        //akkumulere tider i to halvdele, hvor den vurdere om det skal være i første uge eller anden uge
-        int lower_accumulator = 0, higher_accumulator = 0;
-        for (int i = 0; i < TREATMENT_TIME_FRAME /2; ++i) {
-            lower_accumulator += day[i];
-        }
-        for (int i = TREATMENT_TIME_FRAME/2; i < TREATMENT_TIME_FRAME; ++i) {
-            higher_accumulator += day[i];
-        }
-        //Den tager der hvor der er flest tider for at øge flow
-        if(lower_accumulator>higher_accumulator){
-            //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
-            for (int i = 0; i < TREATMENT_TIME_FRAME; ++i) {
-                if(day[i]>day[recom_day-1]){
-                    recom_day = i+1;
-                }
-            }
-            for (int i = 0; i < number_of_timeslot; ++i) {
-                if(timeslots[i].day == recom_day){
-                    return &timeslots[i];
-                }
-            }
-        }else {
-            //loop der finder den dag, hvor der er flest tider, så der er constant spredning (dette kan ændres)
-            for (int i = TREATMENT_TIME_FRAME/2; i < TREATMENT_TIME_FRAME; ++i) {
-                if (day[i] > day[recom_day - 1]) {
-                    recom_day = i + 1;
-                }
-            }
-            for (int i = 0; i < number_of_timeslot; ++i) {
-                if (timeslots[i].day == recom_day) {
-                    return &timeslots[i];
-                }
+    } else {
+        recom_day = days /2;
+        for (int i = days / 2; i < days; ++i) {
+            if (day_count[i] > day_count[recom_day]) {
+                recom_day = i;
             }
         }
     }
+    // the list is run through again until the first free time of the recommended day is found and returned
+    temp = list.head->next;
+    while (temp != NULL) {
+        if (temp->day == recom_day+1) {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    //if no recommended slot is found a null is returned
+    return NULL;
 }
 
 
@@ -544,14 +484,16 @@ void forward_referral (referral declined_ref) {
     int destination;
 
     printf("Enter destination");
+    clear_buffer();
     scanf(" %d", &destination);
+
+    printf("What are the reason for the forwarding:\n>");
     clear_buffer();
-    printf("What are the reason for the decline/return:\n>");
-    scanf("%s", detail.reason);
+    scanf("%[^\n]", detail.reason);
+
+    printf("What do you expect from the recipient:\n>");
     clear_buffer();
-    printf("What recommended action to be carried out:\n>");
-    scanf("%s", detail.action);
-    clear_buffer();
+    scanf("%[^\n]", detail.action);
 
 
     FILE* fp = fopen("./database/forwarded_referrals", "a+");
@@ -590,11 +532,12 @@ void return_referral(referral declined_ref) {
     return_ref detail;
 
     printf("What are the reason for the decline/return:\n>");
-    scanf("%s", detail.reason);
     clear_buffer();
+    scanf("%[^\n]", detail.reason);
+
     printf("What recommended action to be carried out:\n>");
-    scanf("%s", detail.action);
     clear_buffer();
+    scanf("%[^\n]", detail.action);
 
 
     FILE *fp = fopen("./database/returned_referrals", "a+");
@@ -778,27 +721,4 @@ int time_delete (int chosen_day, char chosen_time[], int ref_id) {
     }
 
     return 0;
-}
-
-
-
-//NOTE: Der mangler ordentlig udprint ved reschedule.
-
-void print_timetable () {
-
-    char line [TEST];
-
-    FILE* fp = fopen("./database/timetable.csv", "r");
-
-    if (fp == NULL) {
-        perror("Error opening timetable");
-        exit(EXIT_FAILURE);
-    }
-
-    while (fgets(line, TEST, fp)) {
-        printf("%s\n", line);
-    }
-
-    fclose(fp);
-
 }
