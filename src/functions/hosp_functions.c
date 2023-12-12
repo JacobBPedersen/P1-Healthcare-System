@@ -697,6 +697,8 @@ referral search_ref () {
 
     char* ref_s = search_first(target_id, fp);
 
+    fclose(fp);
+
     referral ref;
 
     sscanf(ref_s, "%d,%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
@@ -743,7 +745,7 @@ int time_delete (int chosen_day, char chosen_time[], int ref_id) {
         sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
                &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
                times[10], times[11], times[12], times[13], times[14]);
-        char full_time[7];
+        char full_time[DETAILS_LENGTH];
 
         if (day == chosen_day) {
             sprintf(full_time, "%so%d", chosen_time, ref_id);
@@ -781,3 +783,22 @@ int time_delete (int chosen_day, char chosen_time[], int ref_id) {
 
 
 //NOTE: Der mangler ordentlig udprint ved reschedule.
+
+void print_timetable () {
+
+    char line [TEST];
+
+    FILE* fp = fopen("./database/timetable.csv", "r");
+
+    if (fp == NULL) {
+        perror("Error opening timetable");
+        exit(EXIT_FAILURE);
+    }
+
+    while (fgets(line, TEST, fp)) {
+        printf("%s\n", line);
+    }
+
+    fclose(fp);
+
+}

@@ -128,6 +128,7 @@ hosp_person hosp_user ();
 char *search_first(char *cpr, FILE *file);
 int line_count_file(FILE* fp);
 referral search_ref ();
+void print_timetable ();
     // String and input manipulation:
 void clear_buffer();
 void chomp(char *s);
