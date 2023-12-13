@@ -11,4 +11,5 @@ add_executable(P1_Healthcare_System main.c
 
 target_link_libraries(P1_Healthcare_System functions)
 
+include_directories(database, functions)
 include_directories(../src/functions)
