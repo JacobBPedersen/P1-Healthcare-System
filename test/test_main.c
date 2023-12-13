@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <functions.h>
 
-
-
 void test_create_patient() {
 
     FILE *create_patient_file = freopen("./inputs/create_patient.txt", "r", stdin);
@@ -111,7 +109,7 @@ void test_add_node_timeslot(){
     test_node_list.head = NULL;
     int test1 = test_node_list.head->day;
     char* test2 = test_node_list.head->time;
-    
+
     assert(test1 == 0);
     assert(strcmp(test2,"1015") == 0);
 }
@@ -126,11 +124,6 @@ void test_print_node(){
     assert(test_node_list.head->day == 0);
     assert(strcmp(test_node_list.head->time,"1015") == 0);
 }
-
-int test(){
-    return 3;
-}
-
 
 
 int main(int argc, char **argv) {
