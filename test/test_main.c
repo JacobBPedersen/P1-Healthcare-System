@@ -1,5 +1,7 @@
 #include <assert.h>
-#include "../src/functions/functions.h"
+#include <functions.h>
+
+
 
 void test_create_patient() {
 
@@ -27,6 +29,7 @@ void test_cpr_validator(){
     int test4 = cpr_validator("909090-9090");
     int test5 = cpr_validator("999999999999");
     int test6 = cpr_validator("!#€%&/()=?`");
+    int test7 = cpr_validator("123456.1234");
 
     assert(test1 == 0);
     assert(test2 == 1);
@@ -34,6 +37,7 @@ void test_cpr_validator(){
     assert(test4 == 0);
     assert(test5 == 1);
     assert(test6 == 1);
+    assert(test7 == 1);
 
 }
 
@@ -128,11 +132,18 @@ void test_print_node(){
     assert(strcmp(test_node_list.head->time,"1015") == 0);
 }
 
+int test(){
+    return 3;
+}
+
+
+
+
 int main() {
 
     //test_create_patient();
 
-    //test_cpr_validator();
+    test_cpr_validator();
 
     //test_search_first();
 
@@ -145,6 +156,7 @@ int main() {
     //test_add_node_timeslot();
 
     //test_print_node();
+
 
     return 0;
 }

@@ -31,7 +31,7 @@ int cpr_validator(char cpr[CPR_LENGTH]){
 
     int is_correct_cpr_length = strlen(cpr) == CPR_LENGTH-1;
 
-    if (sscanf(cpr, "%6d-%4d", &digits1, &digits2) == 2 && is_correct_cpr_length) {
+    if (is_correct_cpr_length && sscanf(cpr, "%6d-%4d", &digits1, &digits2) == 2 ) {
 
         sprintf(str, "%d", digits1);
         int lengthOfDigits1 = strlen(str);
