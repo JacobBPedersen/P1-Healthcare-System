@@ -58,7 +58,6 @@ void test_search_first(){
 
 void test_GP_USER(){
     if (freopen("./inputs/GP_USER.txt", "r", stdin) == NULL) {
-        perror("Failed to open file");
         assert(0 && "Failed to open file for GP_USER.txt");
     }
 
@@ -73,7 +72,6 @@ void test_GP_USER(){
 
 void test_hosp_user(){
     if (freopen("./inputs/hosp_user.txt", "r", stdin) == NULL) {
-        perror("Failed to open file");
         assert(0 && "Failed to open file for hosp_user.txt");
 
     }
@@ -90,8 +88,7 @@ void test_hosp_user(){
 
 void test_search_patient(){
     if (freopen("./inputs/search_patient.txt", "r", stdin) == NULL) {
-        perror("Failed to open file");
-        assert(0 && "Failed to open file for search_patient.txt test");
+        assert(0 && "Failed to open file for search_patient.txt");
     }
 
     patient test = search_patient();
