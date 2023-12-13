@@ -165,7 +165,6 @@ int time_delete (int chosen_day, char chosen_time[], int ref_id);
     // Sorting function prototypes, utilized by referral_inbox:
 void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
 int compare_sev (const void *x_ref, const void *y_ref);
-int compare_zip (const void *x_ref, const void *y_ref);
 int compare_cpr (const void *x_ref, const void *y_ref);
 int compare_ref_id (const void *x_ref, const void *y_ref);
 

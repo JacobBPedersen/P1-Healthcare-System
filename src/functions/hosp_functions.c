@@ -7,6 +7,8 @@ node* recommended_timeslot(nodelist list, int days) {
     int number_of_timeslot = list_counter(list.head);
     int day_count[days];
     //initializing the counter to zero
+
+
     for (int i = 0; i < days; ++i) {
         day_count[i] = 0;
     }
@@ -310,8 +312,8 @@ referral referral_inbox(int* ref_returned) {
         int target_id;
         int sort_choice;
         int ref_mode;
-        printf("\nDo you want to sort referrals?\n1 - Severity\t2 - Zip Code\t3 - CPR\t4 - Chronologically (ref ID)\t-1 - Exit"
-               "\nDo you want to choose a referral? \nPress 5\n>");
+        printf("\nDo you want to sort referrals?\n1 - Severity\t2 - CPR\t3 - Chronologically (ref ID)\t-1 - Exit"
+               "\nDo you want to choose a referral? \nPress 4\n>");
         scanf("%d", &sort_choice);
 
         switch (sort_choice) {
@@ -319,16 +321,13 @@ referral referral_inbox(int* ref_returned) {
                 sort_ref(array, amount_ref, compare_sev);
                 break;
             case 2:
-                sort_ref(array, amount_ref, compare_zip);
-                break;
-            case 3:
                 sort_ref(array, amount_ref, compare_cpr);
                 break;
-            case 4:
+            case 3:
                 sort_ref(array, amount_ref, compare_ref_id);
                 break;
-            case 5:
-                printf("\nChoose by reference ID:\n>");
+            case 4:
+                printf("\nChoose by referral ID:\n>");
                 scanf(" %d", &target_id);
                 for (int j = 0; j < amount_ref; ++j) {
                     if (target_id == array[j].ref_id) {
@@ -388,20 +387,6 @@ int compare_sev (const void *x_ref, const void *y_ref) {
     }
     // If the categories were not 'not equal', compare the severity instead, since it then determines the order.
     return (int)y->diagnosis_sev - (int)x->diagnosis_sev; // Type cast to int, to avoid clang-tidy and conversion errors
-
-}
-
-int compare_zip (const void *x_ref, const void *y_ref) {
-
-    referral* x = (referral*)x_ref;
-    referral* y = (referral*)y_ref;
-
-    // Comparing the zip codes.
-    if (x->patient.address.zip_code != y->patient.address.zip_code) {
-        return strcmp(x->patient.address.zip_code, y->patient.address.zip_code); // Utilizing string compare to determine order of zip codes.
-    } else {
-        return 0;
-    }
 
 }
 
