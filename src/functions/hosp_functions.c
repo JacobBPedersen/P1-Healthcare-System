@@ -246,7 +246,7 @@ int time_update (int chosen_day, char chosen_time[], int ref_id) {
 
 
 
-referral referral_inbox(int* ref_returned) {
+referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
 
     char line[TEST];
 
@@ -345,13 +345,13 @@ referral referral_inbox(int* ref_returned) {
                         }
                         else if (ref_mode == 2) {
                             free(array);
-                            return_referral(selected_ref);
+                            return_referral(selected_ref, current_hosp);
                             delete_from_inbox(selected_ref.ref_id);
                             return (referral){0};
                         }
                         else if (ref_mode == 3) {
                             free(array);
-                            forward_referral(selected_ref);
+                            forward_referral(selected_ref, current_hosp);
                             delete_from_inbox(selected_ref.ref_id);
                             return (referral){0};
                         }
@@ -463,7 +463,7 @@ void delete_from_inbox (int target_id) {
 
 
 
-void forward_referral (referral declined_ref) {
+void forward_referral (referral declined_ref, hosp_person current_hosp) {
 
     return_ref detail;
     int destination;
@@ -488,7 +488,7 @@ void forward_referral (referral declined_ref) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(fp, "%d,%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s\n",
+    fprintf(fp, "%d,%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
             //Critic
             destination, detail.reason, detail.action,
             //declined_ref.ref_id,
@@ -504,7 +504,9 @@ void forward_referral (referral declined_ref) {
             declined_ref.ref_dest, declined_ref.diagnosis_cat, declined_ref.diagnosis_sev, declined_ref.diagnosis_desc,
             declined_ref.short_anamnesis, declined_ref.results, declined_ref.res_bact, declined_ref.handicap,
             declined_ref.ref_purpose, declined_ref.language_barrier, declined_ref.language, declined_ref.GP.name,
-            declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num);
+            declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num,
+            //Responsible hospital employee
+            current_hosp.name, current_hosp.title, current_hosp.department, current_hosp.phone_num);
 
 
     fclose(fp);
@@ -512,7 +514,7 @@ void forward_referral (referral declined_ref) {
 }
 
 
-void return_referral(referral declined_ref) {
+void return_referral(referral declined_ref, hosp_person current_hosp) {
 
     return_ref detail;
 
@@ -532,7 +534,7 @@ void return_referral(referral declined_ref) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(fp, "%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s\n",
+    fprintf(fp, "%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
 //Critic
             detail.reason, detail.action,
 //declined_ref.ref_id,
@@ -549,7 +551,9 @@ void return_referral(referral declined_ref) {
             declined_ref.ref_dest, declined_ref.diagnosis_cat, declined_ref.diagnosis_sev, declined_ref.diagnosis_desc,
             declined_ref.short_anamnesis, declined_ref.results, declined_ref.res_bact, declined_ref.handicap,
             declined_ref.ref_purpose, declined_ref.language_barrier, declined_ref.language, declined_ref.GP.name,
-            declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num);
+            declined_ref.GP.title, declined_ref.GP.clinic, declined_ref.GP.phone_num,
+            //Responsible hospital employee
+            current_hosp.name, current_hosp.title, current_hosp.department, current_hosp.phone_num);
 
     fclose(fp);
 

@@ -65,7 +65,7 @@ void hosp_main_flow (hosp_person current_hosp) {
         clear_buffer();
         switch (mode_choice_hosp) {
             case 1:
-                current_ref = referral_inbox(&ref_returned);
+                current_ref = referral_inbox(&ref_returned, current_hosp);
                 if (ref_returned == 1) {
                     review_referral(current_ref);
                 }
