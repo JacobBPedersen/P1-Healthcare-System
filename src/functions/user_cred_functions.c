@@ -24,7 +24,7 @@ GP GP_user(){
         printf("Please enter id:\n>");
         scanf(" %s", id);
 
-        FILE *fp_gp = fopen("./database/GP_usernames.csv", "r");
+        FILE *fp_gp = fopen("./database/gp_users.csv", "r");
 
         if (fp_gp == NULL) {
             printf("Error");
@@ -55,7 +55,7 @@ hosp_person hosp_user (){
         printf("Please enter id:\n>");
         scanf(" %s", id);
 
-        FILE *fp_hosp = fopen("./database/hospital_usernames.csv", "r");
+        FILE *fp_hosp = fopen("./database/hosp_users.csv", "r");
 
         if (fp_hosp == NULL) {
             printf("Error");

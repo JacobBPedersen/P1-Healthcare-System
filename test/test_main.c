@@ -37,7 +37,7 @@ void test_cpr_validator(){
 }
 
 void test_search_first(){
-    FILE *gp_usernames = fopen("./database/GP_usernames.csv","r");
+    FILE *gp_usernames = fopen("./database/gp_users.csv","r");
 
     assert(gp_usernames != NULL && "Failed to open file");
 

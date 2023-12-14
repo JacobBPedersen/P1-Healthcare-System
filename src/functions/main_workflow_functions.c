@@ -6,6 +6,8 @@ void GP_main_flow (GP current_gp) {
 
     patient current_patient;
 
+    char cpr[CPR_LENGTH];
+
     int exit = 1;
 
     while (exit == 1) {
@@ -16,21 +18,23 @@ void GP_main_flow (GP current_gp) {
             case 1:
                 current_patient = search_patient();
                 char choice_ref;
-                printf("\nDo you want to create a referral for a patient (y/n) Name:%s CPR:%s\n>", current_patient.name,
+                printf("\nDo you want to create a referral for a patient (Yes: 1, No: 0) Name:%s CPR:%s\n>", current_patient.name,
                        current_patient.CPR);
                 scanf(" %c", &choice_ref);
-                if (choice_ref != 'y') {
+                if (choice_ref != '1') {
                     break;
                 }
                 create_referral(current_patient, current_gp);
-                printf("Referral created. Do you want to continue (y/n):\n>");
+                printf("\nReferral created. Do you want to continue (Yes: 1, No: 0):\n>");
                 scanf(" %c", &choice_ref);
-                if (choice_ref != 'y') {
+                if (choice_ref != '1') {
                     exit = 0;
                 }
                 break;
             case 2:
-                create_patient();
+                printf("Enter CPR of patient:\n>");
+                scanf(" %[^\n]", cpr);
+                create_patient(cpr);
                 break;
             case 3:
                 edit_patient_info();
@@ -39,7 +43,7 @@ void GP_main_flow (GP current_gp) {
                 exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
                 break;
             default:
-                printf("Invalid input");
+                printf("\nInvalid input\n");
         }
     }
 

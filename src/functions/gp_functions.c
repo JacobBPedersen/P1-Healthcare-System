@@ -38,7 +38,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
     printf("Enter handicap(s) of the patient for the referral:\n>");
     scanf(" %[^\n]", new_referral.handicap);
     //Information given
-    printf("Enter the information of the patient for the referral:\n>");
+    printf("Enter the purpose for the referral:\n>");
     scanf(" %[^\n]", new_referral.ref_purpose);
     //Language
 
@@ -54,7 +54,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
     }
 
 
-    FILE *referrals_documentation = fopen("./database/referrals.csv", "a+");
+    FILE *referrals_documentation = fopen("./database/gp_ref_doc.csv", "a+");
     if (referrals_documentation == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
@@ -70,9 +70,8 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
 
     new_referral.ref_id = ref_id_create()+1;
-    printf("TESTLALA");
 
-    FILE *referrals_send = fopen("./database/referrals_send.csv", "a+");
+    FILE *referrals_send = fopen("./database/hosp_ref_inbox.csv", "a+");
     if (referrals_send == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
@@ -97,7 +96,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
     fclose(referrals_send);
 
     //Foelgende er en inboks for sendte refs. Tiltænkt som at være et lager for hospitalet.
-    FILE *referrals_send_doc = fopen("./database/referrals_send_doc.csv", "a+");
+    FILE *referrals_send_doc = fopen("./database/hosp_ref_inbox_doc.csv", "a+");
     if (referrals_send_doc == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
@@ -127,7 +126,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
 patient search_patient() {
 
-    FILE *fp = fopen("./database/patient_register.csv", "r");
+    FILE *fp = fopen("./database/gp_patient_register.csv", "r");
 
     if(fp == NULL){
 
@@ -164,7 +163,7 @@ patient search_patient() {
 
         char user_choice;
 
-        printf("Patient not found, would you like to create patient? Y/n?\n> ");
+        printf("\nPatient not found, would you like to create patient? (yes: 1, no: 0)\n> ");
 
         // While loop for creating patient, and validating user input.
         while (1){
@@ -173,15 +172,14 @@ patient search_patient() {
             // clear_buffer();
 
             // If user want to create a patient
-            if (user_choice == 'y' || user_choice == 'Y' ){
-
+            if (user_choice == '1'){
                 // Create patient function
-                return create_patient();
-            }else if(user_choice == 'n') {
+                return create_patient(cpr);
+            }else if(user_choice == '0') {
                 printf("EXIT PROGRAM");
                 exit(1);
             }else{
-                printf("Invalid input - Y/n\n> ");
+                printf("\nInvalid input - (yes: 1, no: 0)\n> ");
             }
         }
     }
@@ -204,18 +202,16 @@ patient search_patient() {
 
 
 
-patient create_patient() {
-    //Henvist til denne funktion hvis patient ikke findes.
+patient create_patient(char* cpr) {
     patient new_patient;
     //CPR
-    printf("Enter CPR of patient:\n>");
-    scanf(" %[^\n]", new_patient.CPR);
+    strcpy(new_patient.CPR, cpr);
     fflush(stdin);
     //Name
-    printf("Enter name of patient:\n>");
+    printf("\nEnter name of patient:\n>");
     scanf(" %[^\n]", new_patient.name);
     fflush(stdin);
-    //Age - Midlertidig
+    //Age
     printf("Enter age of patient:\n>");
     scanf("%d", &new_patient.age);
     fflush(stdin);
@@ -255,11 +251,10 @@ patient create_patient() {
     printf("Enter email of one relative of the patient:\n>");
     scanf(" %s", new_patient.relative.email);
     fflush(stdin);
-    //Date
-    //Date format
 
 
-    FILE *pat_reg = fopen("./database/patient_register.csv", "a+");
+
+    FILE *pat_reg = fopen("./database/gp_patient_register.csv", "a+");
     if (pat_reg == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
@@ -271,7 +266,6 @@ patient create_patient() {
             new_patient.relative.email);
 
 
-    //return patient hvis der skal oprettes en referral, ellers ikke
     return new_patient;
 }
 
@@ -282,7 +276,6 @@ int edit_patient_info() {
     char cpr[13];
     int found = 0;
 
-    //patient return_patient = {"333333-3333","Knud Knudsen",25,'f',"+4577777777","9000","Aalborg","Lil knud","10 4.tv","farmand","+4566666666","farmand@gmail.com"};
 
 
     patient return_patient = search_patient();
@@ -293,54 +286,55 @@ int edit_patient_info() {
     int cond = 1;
     while (cond == 1) {
         int choice;
-        printf("What do you want to edit (1:name, 2:age, 3:sex, 4:phone_number, 5:zip-code,\n"
-               "6:city, 7:street_name, 8:house_number, 9:rel_name, 10:rel_phone_number, 11:rel_email\n"
-               "For complete edit, write '-1'\n>");
+        printf("\nWhat do you want to edit (1:name, 2:age, 3:sex, 4:phone_number, 5:zip-code,\n"
+               "6:city, 7:street_name, 8:house_number, 9:relative name, 10:relative phone number,\n"
+               "11:relative email\n"
+               "\nTo exit editing mode, input '-1'\n>");
         scanf(" %d", &choice);
 
         switch (choice) {
             case 1:
-                printf("enter name:\n>");
+                printf("\nEnter name:\n>");
                 scanf(" %s", return_patient.name);
                 break;
             case 2:
-                printf("enter age:\n>");
+                printf("\nEnter age:\n>");
                 scanf(" %d", &return_patient.age);
                 break;
             case 3:
-                printf("enter sex:\n>");
+                printf("\nEnter sex:\n>");
                 scanf(" %c", &return_patient.sex);
                 break;
             case 4:
-                printf("enter phone number:\n>");
+                printf("\nEnter phone number:\n>");
                 scanf(" %s", return_patient.phone_num);
                 break;
             case 5:
-                printf("enter zip code:\n>");
+                printf("\nEnter zip code:\n>");
                 scanf(" %s", return_patient.address.zip_code);
                 break;
             case 6:
-                printf("enter city:\n>");
+                printf("\nEnter city:\n>");
                 scanf(" %s", return_patient.address.city);
                 break;
             case 7:
-                printf("enter street name:\n>");
+                printf("\nEnter street name:\n>");
                 scanf(" %s", return_patient.address.street_name);
                 break;
             case 8:
-                printf("enter house number etc:\n>");
+                printf("\nEnter house number etc:\n>");
                 scanf(" %s", return_patient.address.house_number_etc);
                 break;
             case 9:
-                printf("enter name of relative:\n>");
+                printf("\nEnter name of relative:\n>");
                 scanf(" %s", return_patient.relative.name);
                 break;
             case 10:
-                printf("enter phone number of relative:\n>");
+                printf("\nEnter phone number of relative:\n>");
                 scanf(" %s", return_patient.relative.phone_num);
                 break;
             case 11:
-                printf("enter email of relative:\n>");
+                printf("\nEnter email of relative:\n>");
                 scanf(" %s", return_patient.relative.email);
                 break;
             case -1:
@@ -354,10 +348,10 @@ int edit_patient_info() {
     }
 
 
-    FILE *srcFile = fopen("./database/patient_register.csv", "r");
+    FILE *srcFile = fopen("./database/gp_patient_register.csv", "r");
     FILE *destFile = fopen("./database/temp_patient_register.csv", "w");
     if (!srcFile || !destFile) {
-        perror("Fejl ved åbning af filer");
+        perror("\nError opening the files\n");
         return -1;
     }
 
@@ -382,54 +376,18 @@ int edit_patient_info() {
         }
     }
 
-    //SKAL TESTES SENERE
-
-//    // Move to the end of the file
-//    fseek(destFile, 0, SEEK_END);
-//    int fileSize = ftell(destFile);
-//    printf("TEST: %d", fileSize);
-//
-//    // Check and remove newline
-//    fseek(destFile, -1, SEEK_END); // Go back one character
-//    if (fgetc(destFile) == '\n') {
-//        fseek(destFile, -1, SEEK_END);
-//        ftruncate(fileno(destFile), fileSize - 1);
-//    }
-
-
-
-// Get the file descriptor
-//    int fd = _fileno(destFile);
-//
-//    // Find the size of the file
-//    fseek(destFile, 0, SEEK_END);
-//    long fileSize = ftell(destFile);
-//
-//    // Check the last character
-//    fseek(destFile, -1, SEEK_END);
-//    int lastChar = fgetc(destFile);
-//    if (lastChar == '\n') {
-//        // Resize the file to remove the last character
-//        if (_chsize(fd, fileSize - 1) != 0) {
-//            perror("Error truncating file");
-//            fclose(destFile);
-//            return -1;
-//        }
-//    }
-
-
 
     fclose(srcFile);
     fclose(destFile);
 
     if (!found) {
-        printf("CPR %s not found", target_cpr);
-        remove("temp_patient_register.csv");
+        printf("\nCPR %s not found\n", target_cpr);
+        remove("./database/temp_patient_register.csv");
         return -1;
     } else {
         printf("\nEdit complete.\n");
-        remove("patient_register.csv");
-        rename("temp_patient_register.csv", "patient_register.csv");
+        remove("./database/gp_patient_register.csv");
+        rename("./database/temp_patient_register.csv", "./database/gp_patient_register.csv");
     }
 
     return 0;
@@ -442,7 +400,7 @@ int ref_id_create() {
 
     char line[TEST];
 
-    FILE *referrals_documentation = fopen("./database/referrals_send_doc.csv", "r");
+    FILE *referrals_documentation = fopen("./database/hosp_ref_inbox_doc.csv", "r");
     if (referrals_documentation == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
@@ -464,12 +422,10 @@ int ref_id_create() {
 
     fclose(referrals_documentation);
 
-    printf("\nTEST: %s\n", line);
 
     int ref_id;
     sscanf(line, "%d", &ref_id);
 
-    printf("\nTest: %d", ref_id);
 
     return ref_id;
 

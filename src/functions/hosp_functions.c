@@ -161,7 +161,7 @@ void time_node_structure (int days, int ref_id) {
 node* add_node_timeslot(nodelist* list, int day, char* time){
     node* new_node = (node*) malloc(sizeof(node));
     if(new_node==NULL){
-        printf("No memory - goodbye\n");
+        printf("\nNo memory\n");
         exit(EXIT_FAILURE);
     }
     new_node->next = list->head;
@@ -194,7 +194,7 @@ int time_update (int chosen_day, char chosen_time[], int ref_id) {
     FILE *srcFile = fopen("./database/timetable.csv", "r");
     FILE *destFile = fopen("./database/temp_timetable.csv", "w");
     if (!srcFile || !destFile) {
-        perror("Error opening files");
+        perror("\nError opening files\n");
         return -1;
     }
 
@@ -250,10 +250,10 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
 
     char line[TEST];
 
-    FILE* fp = fopen("./database/referrals_send.csv", "r");
+    FILE* fp = fopen("./database/hosp_ref_inbox.csv", "r");
 
     if (fp == NULL) {
-        printf("Error");
+        printf("\nError opening file\n");
         exit(EXIT_FAILURE);
     }
 
@@ -262,7 +262,7 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
     // Dynamically allocate memory for referrals
     referral *array = (referral*)malloc(amount_ref * sizeof(referral));
     if (array == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        fprintf(stderr, "\nMemory allocation failed\n");
         fclose(fp);
         exit(EXIT_FAILURE);
     }
@@ -435,11 +435,11 @@ void delete_from_inbox (int target_id) {
     char line[TEST];
     int ref_id = 0;
 
-    FILE* src_file = fopen("./database/referrals_send.csv", "r");
+    FILE* src_file = fopen("./database/hosp_ref_inbox.csv", "r");
     FILE* dest_file = fopen("./database/referrals_send_temp.csv", "w");
 
     if (src_file == NULL || dest_file == NULL) {
-        printf("Error");
+        printf("\nError\n");
         exit(EXIT_FAILURE);
     }
 
@@ -455,8 +455,8 @@ void delete_from_inbox (int target_id) {
     fclose(src_file);
     fclose(dest_file);
 
-    remove("./database/referrals_send.csv");
-    rename("./database/referrals_send_temp.csv", "./database/referrals_send.csv");
+    remove("./database/hosp_ref_inbox.csv");
+    rename("./database/referrals_send_temp.csv", "./database/hosp_ref_inbox.csv");
 
 
 }
@@ -468,23 +468,23 @@ void forward_referral (referral declined_ref, hosp_person current_hosp) {
     return_ref detail;
     int destination;
 
-    printf("Enter destination");
+    printf("\nEnter destination:\n>");
     clear_buffer();
     scanf(" %d", &destination);
 
-    printf("What are the reason for the forwarding:\n>");
+    printf("\nWhat are the reason for the forwarding:\n>");
     clear_buffer();
     scanf("%[^\n]", detail.reason);
 
-    printf("What do you expect from the recipient:\n>");
+    printf("\nWhat do you expect from the recipient:\n>");
     clear_buffer();
     scanf("%[^\n]", detail.action);
 
 
-    FILE* fp = fopen("./database/forwarded_referrals", "a+");
+    FILE* fp = fopen("./database/ref_forwarded.csv", "a+");
 
     if (fp == NULL) {
-        printf("Error");
+        printf("\nError\n");
         exit(EXIT_FAILURE);
     }
 
@@ -527,7 +527,7 @@ void return_referral(referral declined_ref, hosp_person current_hosp) {
     scanf("%[^\n]", detail.action);
 
 
-    FILE *fp = fopen("./database/returned_referrals", "a+");
+    FILE *fp = fopen("./database/ref_returned.csv", "a+");
 
     if (fp == NULL) {
         printf("Error");
@@ -616,7 +616,7 @@ void reschedule_appointment () {
 referral search_ref () {
 
 
-    FILE* fp = fopen("./database/referrals_send_doc.csv", "r");
+    FILE* fp = fopen("./database/hosp_ref_inbox_doc.csv", "r");
     char target_id[5];
     if (fp == NULL) {
         perror("Error opening file");
@@ -624,7 +624,7 @@ referral search_ref () {
     }
 
 
-    printf("Choose a referral ID");
+    printf("Choose a referral ID:\n>");
     scanf("%s", target_id);
 
     char* ref_s = search_first(target_id, fp);
@@ -687,8 +687,8 @@ int time_delete (int chosen_day, char chosen_time[], int ref_id) {
                     found = 1;
                     sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
                             times[3], times[4], times[5], times[6], times[7], times[8], times[9],
-                            times[10], times[11], times[12], times[13], times[14]); // Opdaterer linjen
-                    break; // Stopper ved første match.
+                            times[10], times[11], times[12], times[13], times[14]); // Updating "line".
+                    break; // Stops when encountering first "match"
                 }
             }
         }

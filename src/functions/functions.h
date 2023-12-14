@@ -24,7 +24,7 @@ enum Hospital_hoved {Amager = 33, Bispenbjerg, Bornholm, Frederiksberg, Gentofte
         Frederikssund, Hilleroed, Helsingoer, Glostrup};
 
 
-enum diagnosis{rhino_virus, cough, flue,acute_child_bronchitis, asthma, COPD, pulmonary_clot,cancer};
+enum diagnosis{rhino_virus, cough, flue, acute_child_bronchitis, asthma, COPD, pulmonary_clot, cancer};
 
 
 /***********************
@@ -143,7 +143,7 @@ int cpr_validator(char cpr[CPR_LENGTH]);
 /// GP function prototypes:
 void create_referral(patient chosen_patient, GP current_gp);
 patient search_patient();
-patient create_patient();
+patient create_patient(char* cpr);
 int edit_patient_info();
 int ref_id_create();
 

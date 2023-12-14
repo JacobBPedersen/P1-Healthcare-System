@@ -7,3 +7,5 @@ CPR,Destination,Diagnosis_Category,Diagnosis_Desc,Anamnesis,Results,Res_Bact,Han
 234567-8901,1,7,5,Hudirritation,Almindelige symptomer,Undersoegelse normal,Allergi,Kendt handicap,Allergibehandling,0,Engelsk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 345678-9012,1,7,6,Maveproblemer,Almindelige symptomer,Undersoegelse normal,Psoriasis,Ingen kendte handicap,Hudpleje,0,Tysk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
 456789-0123,1,7,7,Allergi,Almindelige symptomer,Undersoegelse normal,Glutenintolerans,Kendt handicap,Kostvejledning,0,Dansk,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+181818-1818,1,7,1,Mistaenkt for kraeft,Blod paa kroppen,Blod,Nej,Nej,Udredning ved haemotologisk,0,-,Bjarne Bjarnsen,Nurse,Alles Laegehus,+4523432343
+160402-5673,1,7,4,Mistaenkt kraeft,Problemer med vejrtraekning, hostemedicin fungerer ikke.,Ikke udfoert test,Nej,Ingen,For udredning af lungekraeft,0,-,Niels Nielsen,Secretary,Nordlaege,+4500000000

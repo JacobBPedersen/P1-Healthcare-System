@@ -5,3 +5,5 @@ CPR,name,age,sex,phone_number,zip-code,city,street_name,house_number,rel_name,re
 333333-3333,Ulla Madsen,56,f,+4523912391,8900,Vordingborg,Vammevej,13,Karsten,+4571717171,karsten@mail.com
 090909-9090,Karl Kristensen,23,m,+4591919191,7940,Assels,Assevej,15,Jun,+4560606060,jun@gmail.com
 787878-7878,Jens Petersen,45,m,+4513131313,8000,Husum,husumvej,14,jane,+451231331,jane@test.com
+181818-1818,Joergen,46,m,+4560606060,7900,Nykoebing,Fruevej,13 tv.,Marinella,+4570707070,Mari@gmail.com
+160402-5673,Mads Thomsen,21,m,+4521231232,9400,Noerresundby,Vestergade,78A,Daniel Markussen,+4570707070,dani@gmail.com
