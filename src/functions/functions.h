@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
 
 #define CANCER_TREATMENT_TIME_FRAME 14
 #define TREATMENT_TIME_FRAME 60

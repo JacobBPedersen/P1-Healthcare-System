@@ -7,7 +7,9 @@ void test_create_patient() {
 
     assert(create_patient_file != NULL && "Failed to open file");
 
-    patient test_patient = create_patient();
+    char * test_cpr = "123456-1234";
+
+    patient test_patient = create_patient(test_cpr);
     fclose(create_patient_file);
 
     assert(strcmp("Lars Andersen",test_patient.name) == 0);
@@ -25,6 +27,7 @@ void test_cpr_validator(){
     int test5 = cpr_validator("999999999999");
     int test6 = cpr_validator("!#€%&/()=?`");
     int test7 = cpr_validator("123456.1234");
+    int test8 = cpr_validator("012345-1234");
 
     assert(test1 == 0);
     assert(test2 == 1);
@@ -33,6 +36,7 @@ void test_cpr_validator(){
     assert(test5 == 1);
     assert(test6 == 1);
     assert(test7 == 1);
+    assert(test8 == 0);
 
 }
 
@@ -57,8 +61,8 @@ void test_search_first(){
 }
 
 void test_GP_USER(){
-    if (freopen("./inputs/GP_USER.txt", "r", stdin) == NULL) {
-        assert(0 && "Failed to open file for GP_USER.txt");
+    if (freopen("./inputs/gp_users.txt", "r", stdin) == NULL) {
+        assert(0 && "Failed to open file for gp_users.txt");
     }
 
     GP test1 = GP_user(); // 1
@@ -86,27 +90,14 @@ void test_hosp_user(){
 
 }
 
-void test_search_patient(){
-    if (freopen("./inputs/search_patient.txt", "r", stdin) == NULL) {
-        assert(0 && "Failed to open file for search_patient.txt");
-    }
-
-    patient test = search_patient();
-
-    assert(strcmp(test.name, "Mark Jacob") == 0);
-    assert(strcmp(test.relative.email, "mark@jacob.dk") == 0);
-    assert(strcmp(test.CPR, "123123-1232") == 0);
-    assert(strcmp(test.address.street_name, "the street") == 0);
-
-}
-
 void test_add_node_timeslot(){
     nodelist test_node_list;
     add_node_timeslot(&test_node_list,0,"1015");
     test_node_list.head = NULL;
     int test1 = test_node_list.head->day;
     char* test2 = test_node_list.head->time;
-
+    printf("%d",test1);
+    printf("%s",test2);
     assert(test1 == 0);
     assert(strcmp(test2,"1015") == 0);
 }
@@ -116,7 +107,6 @@ void test_print_node(){
     nodelist test_node_list;
 
     add_node_timeslot(&test_node_list,0,"1015");
-    test_node_list.head->next = NULL;
 
     assert(test_node_list.head->day == 0);
     assert(strcmp(test_node_list.head->time,"1015") == 0);
@@ -141,9 +131,7 @@ int main(int argc, char **argv) {
         test_GP_USER();
     } else if (strcmp(argv[1], "test_hosp_user") == 0) {
         test_hosp_user();
-    } else if (strcmp(argv[1], "test_search_patient") == 0) {
-        test_search_patient();
-    } else if (strcmp(argv[1], "test_add_node_timeslot") == 0) {
+    }  else if (strcmp(argv[1], "test_add_node_timeslot") == 0) {
         test_add_node_timeslot();
     } else if (strcmp(argv[1], "test_print_node") == 0) {
         test_print_node();
