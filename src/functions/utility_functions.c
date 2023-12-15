@@ -26,22 +26,25 @@ void chomp(char *s) {
  ************************/
 
 int cpr_validator(char cpr[CPR_LENGTH]){
-    int digits1, digits2;
-    char str[11];
+    char digits1[6];
+    char digits2[4];
 
     int is_correct_cpr_length = strlen(cpr) == CPR_LENGTH-1;
 
-    if (is_correct_cpr_length && sscanf(cpr, "%6d-%4d", &digits1, &digits2) == 2 ) {
-
-        sprintf(str, "%d", digits1);
-        int lengthOfDigits1 = strlen(str);
-
-        sprintf(str, "%d", digits2);
-        int lengthOfDigits2 = strlen(str);
-
-        if (lengthOfDigits1 == 6 && lengthOfDigits2 == 4){
-            return 0;
+    if (is_correct_cpr_length && sscanf(cpr, "%6c-%4c", digits1, digits2) == 2 ) {
+        for (int i = 0; i <= 5; ++i) {
+            if (!isdigit(digits1[i])) {
+                return 1; // Ugyldig CPR
+            }
         }
+
+        for (int i = 0; i <=3; ++i) {
+            if (!isdigit(digits2[i])) {
+                return 1; // Ugyldig CPR
+            }
+        }
+
+        return 0; // Gyldig CPR
     }
 
     return 1; // Ugyldig CPR
