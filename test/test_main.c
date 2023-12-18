@@ -96,6 +96,7 @@ void test_email_validation(){
     int test6 = email_validation("123@123.dk");
     int test7 = email_validation("email@mail.123");
     int test8 = email_validation("email@email.");
+    int test9 = email_validation("email@@@mail@@.com");
 
     assert(test1 == 1);
     assert(test2 == 0);
@@ -105,9 +106,8 @@ void test_email_validation(){
     assert(test6 == 1);
     assert(test7 == 1);
     assert(test8 == 0);
+    assert(test9 == 0);
 }
-
-
 
 void test_search_first(){
     FILE *gp_usernames = fopen("./database/gp_users.csv","r");
