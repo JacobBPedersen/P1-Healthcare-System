@@ -40,6 +40,61 @@ void test_cpr_validator(){
 
 }
 
+void test_binary_validation() {
+    int test1 = binary_validation("0");
+    int test2 = binary_validation("1");
+    int test3 = binary_validation("2");
+    int test4 = binary_validation("999");
+    int test5 = binary_validation("abc");
+    int test6 = binary_validation("æøå");
+
+    assert(test1 == 1);
+    assert(test2 == 1);
+    assert(test3 == 0);
+    assert(test4 == 0);
+    assert(test5 == 0);
+    assert(test6 == 0);
+}
+
+void test_int_validation(){
+
+    int test1 = int_validation("0");
+    int test2 = int_validation("1");
+    int test3 = int_validation("2");
+    int test4 = int_validation("999");
+    int test5 = int_validation("abc");
+    int test6 = int_validation("æøå");
+
+    assert(test1 == 1);
+    assert(test2 == 1);
+    assert(test3 == 1);
+    assert(test4 == 1);
+    assert(test5 == 0);
+    assert(test6 == 0);
+}
+
+void test_email_validation(){
+    int test1 = email_validation("example@example.com");
+    int test2 = email_validation("example@example");
+    int test3 = email_validation("exampleexample.com");
+    int test4 = email_validation("exampleexamplecom");
+    int test5 = email_validation("123");
+    int test6 = email_validation("123@123.dk");
+    int test7 = email_validation("email@mail.123");
+    int test8 = email_validation("email@email.");
+
+    assert(test1 == 1);
+    assert(test2 == 0);
+    assert(test3 == 0);
+    assert(test4 == 0);
+    assert(test5 == 0);
+    assert(test6 == 1);
+    assert(test7 == 1);
+    assert(test8 == 0);
+}
+
+
+
 void test_search_first(){
     FILE *gp_usernames = fopen("./database/gp_users.csv","r");
 
@@ -94,10 +149,10 @@ void test_add_node_timeslot(){
     nodelist test_node_list;
     add_node_timeslot(&test_node_list,0,"1015");
     test_node_list.head = NULL;
+
     int test1 = test_node_list.head->day;
     char* test2 = test_node_list.head->time;
-    printf("%d",test1);
-    printf("%s",test2);
+
     assert(test1 == 0);
     assert(strcmp(test2,"1015") == 0);
 }
@@ -135,6 +190,12 @@ int main(int argc, char **argv) {
         test_add_node_timeslot();
     } else if (strcmp(argv[1], "test_print_node") == 0) {
         test_print_node();
+    } else if(strcmp(argv[1], "test_binary_validation") == 0) {
+        test_binary_validation();
+    } else if(strcmp(argv[1], "test_int_validation") == 0) {
+        test_int_validation();
+    } else if(strcmp(argv[1], "test_email_validation") == 0) {
+        test_email_validation();
     } else {
         fprintf(stderr, "Test '%s' not found.\n", argv[1]);
         return 1;

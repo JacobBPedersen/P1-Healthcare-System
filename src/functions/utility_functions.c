@@ -50,6 +50,49 @@ int cpr_validator(char cpr[CPR_LENGTH]){
     return 1; // Ugyldig CPR
 }
 
+// Binary value validation
+int binary_validation(char * input){
+    if (strcmp(input,"0") == 0 || strcmp(input,"1") == 0){
+        return 1;
+    }
+    return 0;
+}
+
+// Integer value validation
+int int_validation(char *input) {
+    unsigned long char_len = strlen(input);
+
+    for (int i = 0; i < char_len; ++i) {
+        if (!isdigit(input[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+// Email validation
+int email_validation(char *email) {
+    int atSymbol = -1, dot = -1;
+    int len = strlen(email);
+
+    for (int i = 0; i < len; ++i) {
+        if (email[i] == '@') {
+            atSymbol = i;
+        }
+
+        if (email[i] == '.') {
+            dot = i;
+        }
+    }
+
+    if (atSymbol == -1 || dot == -1 || atSymbol > dot || dot == len - 1) {
+        return 0;
+    }
+
+    return 1;
+}
+
 
 /********************
  * SEARCH FUNCTIONS *

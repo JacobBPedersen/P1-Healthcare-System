@@ -141,6 +141,9 @@ void print_user_hosp (hosp_person user);
 void print_node(nodelist* list);
     // Input validation / validation function prototypes:
 int cpr_validator(char cpr[CPR_LENGTH]);
+int int_validation(char *input);
+int binary_validation(char * input);
+int email_validation(char *input);
 
 /// GP function prototypes:
 void create_referral(patient chosen_patient, GP current_gp);
