@@ -40,14 +40,14 @@ int cpr_validator(char cpr[CPR_LENGTH]){
 
         for (int i = 0; i <=3; ++i) {
             if (!isdigit(digits2[i])) {
-                return 1; // Ugyldig CPR
+                return 1; // Invalid CPR
             }
         }
 
-        return 0; // Gyldig CPR
+        return 0; // Valid CPR
     }
 
-    return 1; // Ugyldig CPR
+    return 1; // Invalid CPR
 }
 
 
@@ -128,7 +128,7 @@ void print_referral(referral new_referral){
     printf("CPR of patient: %s\n", new_referral.patient.CPR);
     //Name
     printf("Name of patient: %s\n", new_referral.patient.name);
-    //Age - Midlertidig
+    //Age
     printf("Age of patient: %d\n", new_referral.patient.age);
     //Sex
     printf("Sex of patient: %c\n", new_referral.patient.sex);
@@ -140,7 +140,7 @@ void print_referral(referral new_referral){
     printf("City of patient: %s\n", new_referral.patient.address.city);
     //Street name
     printf("Street name of patient: %s\n", new_referral.patient.address.street_name);
-    //House numer etc.
+    //House number etc.
     printf("Enter house number etc. of patient: %s\n", new_referral.patient.address.house_number_etc);
     //Relatives
     printf("Enter name of one relative of the patient: %s\n", new_referral.patient.relative.name);
@@ -164,11 +164,9 @@ void print_referral(referral new_referral){
     printf("Resistant bacteria: %s\n", new_referral.res_bact);
     //Handicap
     printf("Handicap(s) of the patient: %s\n", new_referral.handicap);
-    //Information given
+    //Referral purpose
     printf("Information of the patient for the referral: %s\n", new_referral.ref_purpose);
     //Language
-
-    // Der skal promptes med en bool før den kan gå videre
     printf("There is a language barrier of the patient for the referral: %d\n", new_referral.language_barrier);
     //Language
     if (new_referral.language_barrier == 0) {
@@ -176,29 +174,32 @@ void print_referral(referral new_referral){
     } else {
         printf("Spoken language of the patient for the referral: %s\n", new_referral.language);
     }
-    //General practioner
-    //  new_referral.GP = GP; Skal være lig med hvad man indtaster ved login
-
 }
 
 
 void print_node(nodelist* list) {
+    //reversing the list
     reverse_list(list);
-
+    //Current is used to read through the list
     node* current = list->head;
+    // prevday is set to -1 to meet the first if statement, in the first iteration of the while loop
     int prevDay = -1;
 
     while (current != NULL) {
+        //prints the day the first time it is encountered in the list
         if (current->day != prevDay) {
             printf("\n");
             printf("Day %d\nTime: %s  ", current->day, current->time);
         } else {
+            // will only print time if the day is the same
             printf("Time: %s  ", current->time);
         }
-
+        //moving the prevday to the current->day and moving the current node one forward
+        // until the while loop condition fails with null
         prevDay = current->day;
         current = current->next;
     }
+    //restoring the node structure to the initial form
     reverse_list(list);
 }
 

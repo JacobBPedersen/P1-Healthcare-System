@@ -153,7 +153,7 @@ int ref_id_create();
 void time_node_structure (int days, int ref_id);
 void delete_from_inbox (int ref_id);
 void reverse_list(nodelist* list);
-node* add_node_timeslot(nodelist* list, int day, char* time);
+void add_node_timeslot(nodelist* list, int day, char* time);
 node* recommended_timeslot(nodelist list, int days);
 int list_counter(node* current);
 void review_referral(referral ref);

@@ -6,9 +6,8 @@ node* recommended_timeslot(nodelist list, int days) {
     int recom_day = 0;
     int number_of_timeslot = list_counter(list.head);
     int day_count[days];
+
     //initializing the counter to zero
-
-
     for (int i = 0; i < days; ++i) {
         day_count[i] = 0;
     }
@@ -53,10 +52,10 @@ node* recommended_timeslot(nodelist list, int days) {
 }
 
 
-//recursiv optælling af listen
+//recursively counting the nodes
 int list_counter(node* current){
     if(current == NULL){
-        //hovedet trækkes fra
+        //When the end is reached the last node is subtracted, as it starts from the head
         return -1;
     }else{
         return 1 + list_counter(current->next);
@@ -93,31 +92,29 @@ void review_referral(referral ref) {
     }
 
 }
-//option to see current time schedule
-//access specific referrals for review
-//create time in an available time slot
-
 
 void time_node_structure (int days, int ref_id) {
-
-    char choice;
-
+    //accesing the timetable
     FILE *fp = fopen("./database/timetable.csv", "r");
     if (fp == NULL) {
         printf("File not accessed");
         exit(EXIT_FAILURE);
     }
+    //creating an array of 15, which equals the potential free time slots in a day and stores the time in a string
+    // and creating the variable day, which is used in reading the day and time slots with 'a' or 'o' in each line
     char time[15][6];
-
     int day;
+    //creating the list and initializing to NULL
     nodelist free_timeslots = {NULL};
     char time_slot_avaliable;
+    //fscans one day at a time storing the values in the array time.
     for (int i = 0; i < days; ++i) {
         fscanf(fp, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],"
                    "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", &day, time[0], time[1],
                time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9], time[10], time[11],
                time[12], time[13], time[14]);
-
+        //the array time is read through for an 'a' - by skipping the first 4 numbers - and checked in an if statement.
+        // If the condition holds a node is added to the node list.
         for (int j = 0; j < NUMBER_OF_TIMESLOTS; ++j) {
             sscanf(time[j], "%*4[0-9]%c", &time_slot_avaliable);
             if (time_slot_avaliable == 'a') {
@@ -126,8 +123,9 @@ void time_node_structure (int days, int ref_id) {
         }
     }
     fclose(fp);
+    //printing the free timeslots for user interface
     print_node(&free_timeslots);
-
+    char choice;
     if (ref_id != 0) {
         node *recomded_time_slot = recommended_timeslot(free_timeslots, days);
         printf("\nRecommended timeslot is: Day %d - Time: %s\n", recomded_time_slot->day, recomded_time_slot->time);
@@ -158,17 +156,22 @@ void time_node_structure (int days, int ref_id) {
 }
 
 
-node* add_node_timeslot(nodelist* list, int day, char* time){
+void add_node_timeslot(nodelist* list, int day, char* time){
+    //allocating memory to the new node
     node* new_node = (node*) malloc(sizeof(node));
     if(new_node==NULL){
         printf("\nNo memory\n");
         exit(EXIT_FAILURE);
     }
+    //new nodes node pointer is set to what the list is pointing at ensuring the path the list has stored
     new_node->next = list->head;
+    //time_range is used to only take the specific time into the node, without the 'a'
     char time_range[5];
     sscanf(time, "%4s",time_range);
+    //storing day and time info into the node
     strcpy(new_node->time, time_range);
     new_node->day = day;
+    //the list head is updates to point the new node ensuring the integrety of the list
     list->head = new_node;
 }
 
@@ -177,12 +180,14 @@ void reverse_list(nodelist* list) {
     node* current = list->head;
     node* next = NULL;
 
+    //while loop that reads through the nodes, temporarily storing the pointer and reversing the order.
     while (current != NULL) {
         next = current->next;
         current->next = prev;
         prev = current;
         current = next;
     }
+    //pointing the list head at the end
     list->head = prev;
 }
 
