@@ -65,18 +65,18 @@ int list_counter(node* current){
 
 void review_referral(referral ref) {
 
-    printf("\nDo you wish to schedule a timeslot for the patient? (y/n)\n"); //access all referrals - sort either through prioritization or chronologically
+    printf("\nDo you wish to schedule a timeslot for the patient? (Yes: 1, No: 0)\n"); //access all referrals - sort either through prioritization or chronologically
     char choice = ' ';
     while (1) {
         scanf(" %c", &choice);
-        if (choice == 'y' || choice == 'n') {
+        if (choice == '1' || choice == '0') {
             break;
         } else {
-            printf("Input 'y' or 'n'\n");
+            printf("Input '1' or '0'\n");
         }
     }
 
-    if (choice == 'y') {
+    if (choice == '1') {
 
         int days;
         if (ref.diagnosis_cat == cancer) {
