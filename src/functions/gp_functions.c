@@ -286,9 +286,9 @@ int edit_patient_info() {
     int cond = 1;
     while (cond == 1) {
         int choice;
-        printf("\nWhat do you want to edit (1:name, 2:age, 3:sex, 4:phone_number, 5:zip-code,\n"
-               "6:city, 7:street_name, 8:house_number, 9:relative name, 10:relative phone number,\n"
-               "11:relative email\n"
+        printf("\nWhat do you want to edit (1: Name, 2: Age, 3: Sex, 4: Phone number, 5: Zip-code,\n"
+               "6: City, 7: Street name, 8: House number, 9: Relative name, 10: Relative phone number,\n"
+               "11: Relative email\n"
                "\nTo exit editing mode, input '-1'\n>");
         scanf(" %d", &choice);
 
@@ -358,7 +358,6 @@ int edit_patient_info() {
     while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
         chomp(line);
         sscanf(line, "%[^,]", cpr);
-        //printf("\nTest cpr: %s", cpr);
         if(strcmp(target_cpr, cpr) == 0) {
             sprintf(line, "%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s", return_patient.CPR, return_patient.name,
                     return_patient.age,
@@ -366,7 +365,6 @@ int edit_patient_info() {
                     return_patient.address.city,
                     return_patient.address.street_name, return_patient.address.house_number_etc,
                     return_patient.relative.name, return_patient.relative.phone_num, return_patient.relative.email);
-            //fseek(destFile, -strlen(line), SEEK_CUR);
             fprintf(destFile, "\n%s", line);
             found = 1;
         } else if (strcmp(cpr, "CPR") == 0) {
