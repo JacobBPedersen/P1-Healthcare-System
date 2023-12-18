@@ -50,7 +50,7 @@ int cpr_validator(char cpr[CPR_LENGTH]){
     return 1; // Ugyldig CPR
 }
 
-// Binary value validation
+// Binary validation
 int binary_validation(int is_num_validation, char * input){
 
     if (is_num_validation == 1){
@@ -66,9 +66,8 @@ int binary_validation(int is_num_validation, char * input){
         }
         return 0;
     }
+
 return -1;
-
-
 }
 
 // Integer value validation
@@ -98,7 +97,6 @@ int email_validation(char *email) {
             dot = i;
         }
     }
-
     if (atSymbol == -1 || dot == -1 || atSymbol > dot || dot == len - 1) {
         return 0;
     }
