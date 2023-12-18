@@ -51,11 +51,24 @@ int cpr_validator(char cpr[CPR_LENGTH]){
 }
 
 // Binary value validation
-int binary_validation(char * input){
-    if (strcmp(input,"0") == 0 || strcmp(input,"1") == 0){
-        return 1;
+int binary_validation(int is_num_validation, char * input){
+
+    if (is_num_validation == 1){
+
+        if (strcmp(input,"0") == 0 || strcmp(input,"1") == 0){
+            return 1;
+        }
+        return 0;
+    }else if (is_num_validation == 0){
+
+        if (strcmp(input,"y") == 0 || strcmp(input,"n") == 0){
+            return 1;
+        }
+        return 0;
     }
-    return 0;
+return -1;
+
+
 }
 
 // Integer value validation
