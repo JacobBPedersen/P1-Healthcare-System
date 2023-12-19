@@ -25,10 +25,10 @@ void chomp(char *s) {
  * VALIDATION FUNCTIONS *
  ************************/
 
-/***
+/**
  * Validates a CPR number
  * @param cpr The CPR number to be validated
- * @return 1 if the CPR number is valid, 0 if the CPR number is invalid
+ * @return 0 if the CPR number is valid, 1 if the CPR number is invalid
  */
 int cpr_validator(char cpr[CPR_LENGTH]){
     char digits1[6];

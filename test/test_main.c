@@ -96,7 +96,7 @@ void test_email_validation(){
     int test6 = email_validation("123@123.dk");
     int test7 = email_validation("email@mail.123");
     int test8 = email_validation("email@email.");
-    int test9 = email_validation("email@@@mail@@.com");
+    int test9 = email_validation("em.ail@@@mail@@.com");
 
     assert(test1 == 1);
     assert(test2 == 0);

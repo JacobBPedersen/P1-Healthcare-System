@@ -15,6 +15,8 @@
 #define MAX_LINE_LENGTH 150
 #define NUM_TIMES 15  // Antallet af tidspunkter i hver linje
 #define TEST 400
+char validator_buffer[100];
+
 
 
 enum Hospital_nordjyl {Hjoerring = 1, Aalborg, Aalborg_super};
