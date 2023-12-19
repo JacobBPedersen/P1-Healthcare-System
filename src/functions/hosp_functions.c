@@ -339,7 +339,14 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
                         print_referral(array[j]);
                         printf("\nAccept referral for selected patient (1)\n"
                                "Send back referral (2)\nForward referral (3)\nNo action (-1)\n>");
-                        scanf("%d", &ref_mode);
+                        while (1) {
+                            if (scanf(" %d", &ref_mode) == 1) {
+                                break;
+                            }
+                            printf("Invalid input. Try again:\n>");
+                            clear_buffer();
+                        }
+
 
                         referral selected_ref = array[j];
 

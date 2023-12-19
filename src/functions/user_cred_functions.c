@@ -1,19 +1,15 @@
 #include "functions.h"
 
 void user_cred(int* GP_or_Hosp) {
-    //Takes input as to who is using the program, and what it is supposed to do at the moment
-    int invalid_input;
-    do {
-        invalid_input = 0;
-        printf("Please enter if GP (1) or Hospital (0):\n>");
-        scanf(" %d", GP_or_Hosp);
-        clear_buffer();
-        if (*GP_or_Hosp != 0 && *GP_or_Hosp != 1) {
-            printf("Please enter a valid input\n");
-            invalid_input = 1;
-        }
 
-    } while (invalid_input == 1);
+    printf("Please enter if GP (1) or Hospital (0):\n>");
+    while (1) {
+        if (scanf(" %d", GP_or_Hosp) == 1 && (*GP_or_Hosp == 1 || *GP_or_Hosp == 0)) {
+            break;
+        }
+        printf("Invalid input. Try again:\n>");
+        clear_buffer();
+    }
 }
 
 GP GP_user(){

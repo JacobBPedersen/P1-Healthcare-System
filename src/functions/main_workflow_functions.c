@@ -13,7 +13,13 @@ void GP_main_flow (GP current_gp) {
     while (exit == 1) {
         int mode_choice_gp;
         printf("\nSelect mode:\n1 - Create Referral\t2 - Create Patient\t3 - Edit Patient\t-1 - Exit\n>");
-        scanf("%d", &mode_choice_gp);
+        while (1) {
+            if (scanf(" %d", &mode_choice_gp) == 1) {
+                break;
+            }
+            printf("Invalid input. Try again:\n>");
+            clear_buffer();
+        }
         switch (mode_choice_gp) {
             case 1:
                 current_patient = search_patient();
@@ -34,6 +40,13 @@ void GP_main_flow (GP current_gp) {
             case 2:
                 printf("Enter CPR of patient:\n>");
                 scanf(" %[^\n]", cpr);
+                while(1) {
+                    if (cpr_validator(cpr) == 0) {
+                        break;
+                    }
+                    printf("Invalid CPR. Try again:\n>");
+                    scanf(" %[^\n]", cpr);
+                }
                 create_patient(cpr);
                 break;
             case 3:
@@ -65,8 +78,13 @@ void hosp_main_flow (hosp_person current_hosp) {
     while (exit == 1) {
         int mode_choice_hosp;
         printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t-1 - Exit\n>");
-        scanf("%d", &mode_choice_hosp);
-        clear_buffer();
+        while (1) {
+            if (scanf(" %d", &mode_choice_hosp) == 1) {
+                break;
+            }
+            printf("Invalid input. Try again:\n>");
+            clear_buffer();
+        }
         switch (mode_choice_hosp) {
             case 1:
                 current_ref = referral_inbox(&ref_returned, current_hosp);

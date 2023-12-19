@@ -15,13 +15,29 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
     //referral destination
     printf("Enter the destination of the referral:\n>");
-    scanf(" %d", &new_referral.ref_dest);
-    //Diagnosis category
-    printf("Choose the diagnosis category of the referral:\n>");
-    scanf(" %d", &new_referral.diagnosis_cat);
-    //Diagnosis severity
-    printf("Choose the diagnosis severity of the referral:\n>");
-    scanf(" %d", &new_referral.diagnosis_sev);
+    while (1){
+        if(scanf(" %d", &new_referral.ref_dest) == 1){
+            break;
+        };
+        printf("Destination must be a number. Try again:\n>");
+    }
+        //Diagnosis category
+        printf("Choose the diagnosis category of the referral:\n>");
+    while (1){
+        if(scanf(" %d", &new_referral.diagnosis_cat) == 1){
+            break;
+        };
+        printf("Diagnosis category must be a number. Try again:\n>");
+    }
+        //Diagnosis severity
+        printf("Choose the diagnosis severity of the referral:\n>");
+    while (1){
+        if(scanf(" %d", &new_referral.diagnosis_sev) == 1){
+            break;
+        };
+        printf("Diagnosis severity must be a number. Try again:\n>");
+    }
+
     //Diagnosis description
     printf("Enter a description for the diagnosis of the referral:\n>");
     scanf(" %[^\n]", new_referral.diagnosis_desc);
@@ -44,8 +60,13 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
     // Der skal promptes med en bool før den kan gå videre
     printf("Acknowledge if there is a language barrier of the patient for the referral (yes: 1, no: 0):\n>");
-    scanf(" %d", &new_referral.language_barrier);
-    //Language
+    while(1){
+        if(scanf(" %d", &new_referral.language_barrier) == 1 && (new_referral.language_barrier == 0 || new_referral.language_barrier == 1)){
+            break;
+        };
+        printf("Invalid input. Try again:\n>");
+    }
+
     if (new_referral.language_barrier == 0) {
         new_referral.language[0] = '-';
     } else {
@@ -169,7 +190,7 @@ patient search_patient() {
         while (1){
 
             scanf(" %c",&user_choice);
-            // clear_buffer();
+            clear_buffer();
 
             // If user want to create a patient
             if (user_choice == '1'){
@@ -203,6 +224,7 @@ patient search_patient() {
 
 
 patient create_patient(char* cpr) {
+
     patient new_patient;
     //CPR
     strcpy(new_patient.CPR, cpr);
@@ -213,11 +235,25 @@ patient create_patient(char* cpr) {
     fflush(stdin);
     //Age
     printf("Enter age of patient:\n>");
-    scanf("%d", &new_patient.age);
+    while(1){
+
+        if(scanf("%d", &new_patient.age) == 1){
+            break;
+        };
+        printf("Age must be a number. Try again:\n>");
+        fflush(stdin);
+    }
+
     fflush(stdin);
     //Sex
     printf("Enter sex of patient:\n>");
-    scanf(" %c", &new_patient.sex);
+    while(1){
+        if(scanf(" %c", &new_patient.sex) == 1 && new_patient.sex == 'f' || new_patient.sex == 'm'){
+            break;
+        }
+        clear_buffer();
+        printf("Invalid input, try again (f, m):\n>");
+    }
     fflush(stdin);
     //Phone Number
     printf("Enter phone number of patient:\n>");
@@ -249,10 +285,14 @@ patient create_patient(char* cpr) {
     fflush(stdin);
     //Relative email
     printf("Enter email of one relative of the patient:\n>");
-    scanf(" %s", new_patient.relative.email);
-    fflush(stdin);
-
-
+    while(1){
+        scanf(" %s", new_patient.relative.email);
+        if (email_validation(new_patient.relative.email) == 1){
+            break;
+        }
+        printf("Invalid email. Try again:\n>");
+        fflush(stdin);
+    }
 
     FILE *pat_reg = fopen("./database/gp_patient_register.csv", "a+");
     if (pat_reg == NULL) {
@@ -290,7 +330,13 @@ int edit_patient_info() {
                "6: City, 7: Street name, 8: House number, 9: Relative name, 10: Relative phone number,\n"
                "11: Relative email\n"
                "\nTo exit editing mode, input '-1'\n>");
-        scanf(" %d", &choice);
+        while(1){
+            if(scanf(" %d", &choice) == 1){
+                break;
+            };
+            printf("Invalid input. Try again:\n>");
+            clear_buffer();
+        }
 
         switch (choice) {
             case 1:
@@ -299,11 +345,24 @@ int edit_patient_info() {
                 break;
             case 2:
                 printf("\nEnter age:\n>");
-                scanf(" %d", &return_patient.age);
+                while(1){
+
+                    if(scanf("%d", &return_patient.age) == 1){
+                        break;
+                    };
+                    printf("Age must be a number. Try again:\n>");
+                    fflush(stdin);
+                }
                 break;
             case 3:
-                printf("\nEnter sex:\n>");
-                scanf(" %c", &return_patient.sex);
+                printf("Enter sex:\n>");
+                while(1){
+                    scanf(" %c", &return_patient.sex);
+                    if(return_patient.sex == 'f' || return_patient.sex == 'm'){
+                        break;
+                    }
+                    printf("Invalid input, try again (f, m):\n>");
+                }
                 break;
             case 4:
                 printf("\nEnter phone number:\n>");
@@ -335,7 +394,14 @@ int edit_patient_info() {
                 break;
             case 11:
                 printf("\nEnter email of relative:\n>");
-                scanf(" %s", return_patient.relative.email);
+                while(1){
+                    scanf(" %s", return_patient.relative.email);
+                    if (email_validation(return_patient.relative.email) == 1){
+                        break;
+                    }
+                    printf("Invalid email. Try again:\n>");
+                    fflush(stdin);
+                }
                 break;
             case -1:
                 cond = 0;

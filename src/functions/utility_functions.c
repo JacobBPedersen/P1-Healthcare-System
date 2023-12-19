@@ -25,19 +25,29 @@ void chomp(char *s) {
  * VALIDATION FUNCTIONS *
  ************************/
 
+/**
+ * Validates a CPR number
+ * @param cpr The CPR number to be validated
+ * @return 0 if the CPR number is valid, 1 if the CPR number is invalid
+ */
 int cpr_validator(char cpr[CPR_LENGTH]){
     char digits1[6];
     char digits2[4];
 
+    // Check if CPR is correct length
     int is_correct_cpr_length = strlen(cpr) == CPR_LENGTH-1;
 
+    // Check if CPR is correct format and assigned to variables
     if (is_correct_cpr_length && sscanf(cpr, "%6c-%4c", digits1, digits2) == 2 ) {
+
+        // Check if the first 6 digits are digits
         for (int i = 0; i <= 5; ++i) {
             if (!isdigit(digits1[i])) {
                 return 1; // Ugyldig CPR
             }
         }
 
+        // Check if the last 4 digits are digits
         for (int i = 0; i <=3; ++i) {
             if (!isdigit(digits2[i])) {
                 return 1; // Invalid CPR
@@ -50,11 +60,89 @@ int cpr_validator(char cpr[CPR_LENGTH]){
     return 1; // Invalid CPR
 }
 
+/**
+ * Validates a binary input
+ * @param is_num_validation Binary value, 1 if the input is a number, 0 if the input is not a number
+ * @param input The input to be validated
+ * @return 1 if the input is valid, 0 if the input is invalid
+ */
+int binary_validation(int is_num_validation, char * input){
+
+    // is_num_validation = 1, if the input is a number
+    if (is_num_validation == 1){
+
+        // Check if the input is 0 or 1
+        if (strcmp(input,"0") == 0 || strcmp(input,"1") == 0){
+            return 1;
+        }
+        return 0;
+
+    // is_num_validation = 0, if the input is not a number
+    }else if (is_num_validation == 0){
+
+        // Check if the input is y or n
+        if (strcmp(input,"y") == 0 || strcmp(input,"n") == 0){
+            return 1;
+        }
+        return 0;
+    }
+
+return -1;
+}
+
+/***
+ * Validates an integer
+ * @param input The input to be validated
+ * @return 1 if the input is valid, 0 if the input is invalid
+ */
+int int_validation(char *input) {
+    // Get the length of the input
+    unsigned long char_len = strlen(input);
+
+    // Check every character in the input to see if it is a digit
+    for (int i = 0; i < char_len; ++i) {
+        if (!isdigit(input[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+/**
+ * Validates an email
+ * @param email The email to be validated
+ * @return 1 if the email is valid, 0 if the email is invalid
+ */
+int email_validation(char *email) {
+
+    int atSymbol = -1, dot = -1;
+    int amountOfAtSymbols = 0;
+    int len = strlen(email);
+
+    // Count when the @ and . symbols are found
+    for (int i = 0; i < len; ++i) {
+        if (email[i] == '@') {
+            atSymbol = i;
+            amountOfAtSymbols++;
+        }
+
+        if (email[i] == '.') {
+            dot = i;
+        }
+    }
+    // Check if the email is valid based on the position of the @ and . symbols and the amount of @ symbols
+    if (atSymbol == -1 || dot == -1 || atSymbol > dot || dot == len - 1 || amountOfAtSymbols > 1) {
+        return 0;
+    }
+
+    return 1;
+}
+
 
 /********************
  * SEARCH FUNCTIONS *
  ********************/
-
 
 char *search_first(char *cpr, FILE *file) //Kald funktion search first
 {
@@ -79,9 +167,6 @@ char *search_first(char *cpr, FILE *file) //Kald funktion search first
     return "Value not found";
 }
 
-
-
-
 int line_count_file(FILE* fp) {
 
     char line[TEST];
@@ -95,12 +180,9 @@ int line_count_file(FILE* fp) {
 }
 
 
-
-
 /*******************
  * PRINT FUNCTIONS *
  *******************/
-
 
 void print_timetable () {
 
@@ -120,7 +202,6 @@ void print_timetable () {
     fclose(fp);
 
 }
-
 
 void print_referral(referral new_referral){
     printf("\nReferral ID: %d\n", new_referral.ref_id);
@@ -176,7 +257,6 @@ void print_referral(referral new_referral){
     }
 }
 
-
 void print_node(nodelist* list) {
     //reversing the list
     reverse_list(list);
@@ -203,16 +283,12 @@ void print_node(nodelist* list) {
     reverse_list(list);
 }
 
-
 void print_user_gp (struct GP user) {
 
     printf("User ID: %s, Name: %s, Title: %s,\nClinic: %s, Phone number: %s\n", user.id, user.name, user.title, user.clinic, user.phone_num);
-
 }
-
 
 void print_user_hosp (struct hosp_person user) {
 
     printf("User ID: %s, Name: %s, Title: %s, Location: %s,\nDepartment: %s, Phone number: %s\n", user.id, user.name, user.title, user.location, user.department, user.phone_num);
-
 }
