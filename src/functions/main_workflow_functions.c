@@ -1,7 +1,7 @@
 #include "functions.h"
 
 void GP_main_flow (GP current_gp) {
-
+    //prints info of the user
     print_user_gp(current_gp);
 
     patient current_patient;
@@ -9,7 +9,7 @@ void GP_main_flow (GP current_gp) {
     char cpr[CPR_LENGTH];
 
     int exit = 1;
-
+    //while loop to keep program running
     while (exit == 1) {
         int mode_choice_gp;
         printf("\nSelect mode:\n1 - Create Referral\t2 - Create Patient\t3 - Edit Patient\t-1 - Exit\n>");
@@ -20,7 +20,9 @@ void GP_main_flow (GP current_gp) {
             printf("Invalid input. Try again:\n>");
             clear_buffer();
         }
+        //allows the user to access different modes
         switch (mode_choice_gp) {
+            //accessing "create referral" mode
             case 1:
                 current_patient = search_patient();
                 char choice_ref;
@@ -37,6 +39,7 @@ void GP_main_flow (GP current_gp) {
                     exit = 0;
                 }
                 break;
+            //accessing "create patient" mode
             case 2:
                 printf("Enter CPR of patient:\n>");
                 scanf(" %[^\n]", cpr);
@@ -49,32 +52,29 @@ void GP_main_flow (GP current_gp) {
                 }
                 create_patient(cpr);
                 break;
+            //accessing "edit patient info" mode
             case 3:
                 edit_patient_info();
                 break;
+            //exits the program
             case -1:
-                exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
+                exit = 0;
                 break;
             default:
                 printf("\nInvalid input\n");
         }
     }
-
-
 }
 
-
 void hosp_main_flow (hosp_person current_hosp) {
-
+    //prints info of the user
     print_user_hosp(current_hosp);
-
-    patient current_patient;
 
     referral current_ref;
 
     int exit = 1;
     int ref_returned;
-
+    //while loop to keep program running
     while (exit == 1) {
         int mode_choice_hosp;
         printf("\nSelect mode:\n1 - View Inbox\t2 - View Timetable\t-1 - Exit\n>");
@@ -85,13 +85,16 @@ void hosp_main_flow (hosp_person current_hosp) {
             printf("Invalid input. Try again:\n>");
             clear_buffer();
         }
+        //allows the user to access different modes
         switch (mode_choice_hosp) {
+            //accessing "view inbox" mode
             case 1:
                 current_ref = referral_inbox(&ref_returned, current_hosp);
                 if (ref_returned == 1) {
                     review_referral(current_ref);
                 }
                 break;
+            //accessing "view timetable" mode
             case 2:
                 printf("\n");
                 print_timetable();
@@ -104,6 +107,7 @@ void hosp_main_flow (hosp_person current_hosp) {
                 } else {
                     break;
                 }
+            //exits the program
             case -1:
                 exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
                 break;
@@ -111,6 +115,4 @@ void hosp_main_flow (hosp_person current_hosp) {
                 printf("Invalid input");
         }
     }
-
-
 }
