@@ -58,7 +58,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
     scanf(" %[^\n]", new_referral.ref_purpose);
     //Language
 
-    // Der skal promptes med en bool før den kan gå videre
+    // It should prompt with a bool before it can continue
     printf("Acknowledge if there is a language barrier of the patient for the referral (yes: 1, no: 0):\n>");
     while(1){
         if(scanf(" %d", &new_referral.language_barrier) == 1 && (new_referral.language_barrier == 0 || new_referral.language_barrier == 1)){
@@ -66,7 +66,7 @@ void create_referral(patient chosen_patient, GP current_gp) {
         };
         printf("Invalid input. Try again:\n>");
     }
-
+    // If there is no language barrier, the spoken language is set to '-'
     if (new_referral.language_barrier == 0) {
         new_referral.language[0] = '-';
     } else {
@@ -74,13 +74,14 @@ void create_referral(patient chosen_patient, GP current_gp) {
         scanf(" %[^\n]", new_referral.language);
     }
 
-
+    // Write referral to file
     FILE *referrals_documentation = fopen("./database/gp_ref_doc.csv", "a+");
     if (referrals_documentation == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
     }
 
+    // Inserts data into the file
     fprintf(referrals_documentation, "\n%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
             new_referral.patient.CPR, new_referral.ref_dest, new_referral.diagnosis_cat, new_referral.diagnosis_sev, new_referral.diagnosis_desc,
             new_referral.short_anamnesis, new_referral.results, new_referral.res_bact, new_referral.handicap,
@@ -92,12 +93,14 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
     new_referral.ref_id = ref_id_create()+1;
 
+    // The following is an inbox for sent referrals. Intended to be a storage for the hospital.
     FILE *referrals_send = fopen("./database/hosp_ref_inbox.csv", "a+");
     if (referrals_send == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
     }
 
+    // Inserts data into the file
     fprintf(referrals_send, "\n%d,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
             new_referral.ref_id,
             //patient
@@ -116,13 +119,14 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
     fclose(referrals_send);
 
-    //Foelgende er en inboks for sendte refs. Tiltænkt som at være et lager for hospitalet.
+
+    //The following is an inbox for sent referrals. Intended to be a storage for the hospital.
     FILE *referrals_send_doc = fopen("./database/hosp_ref_inbox_doc.csv", "a+");
     if (referrals_send_doc == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
     }
-
+    //
     fprintf(referrals_send_doc, "\n%d,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s",
             new_referral.ref_id,
             //patient
@@ -222,7 +226,7 @@ patient search_patient() {
 }
 
 
-
+// Function for creating a patient
 patient create_patient(char* cpr) {
 
     patient new_patient;
@@ -235,6 +239,8 @@ patient create_patient(char* cpr) {
     fflush(stdin);
     //Age
     printf("Enter age of patient:\n>");
+
+    // While loop for inserting and validating age
     while(1){
 
         if(scanf("%d", &new_patient.age) == 1){
@@ -245,7 +251,7 @@ patient create_patient(char* cpr) {
     }
 
     fflush(stdin);
-    //Sex
+    // While loop for inserting and validating sex
     printf("Enter sex of patient:\n>");
     while(1){
         if(scanf(" %c", &new_patient.sex) == 1 && new_patient.sex == 'f' || new_patient.sex == 'm'){
@@ -294,11 +300,13 @@ patient create_patient(char* cpr) {
         fflush(stdin);
     }
 
+    // Write patient to file
     FILE *pat_reg = fopen("./database/gp_patient_register.csv", "a+");
     if (pat_reg == NULL) {
         printf("Error");
         exit(EXIT_FAILURE);
     }
+    // data is written to the file
     fprintf(pat_reg, "\n%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s",
             new_patient.CPR, new_patient.name, new_patient.age, new_patient.sex, new_patient.phone_num,
             new_patient.address.zip_code, new_patient.address.city, new_patient.address.street_name,
@@ -309,27 +317,30 @@ patient create_patient(char* cpr) {
     return new_patient;
 }
 
-
+// Function for updating a patient
 int edit_patient_info() {
 
     char line[MAX_LINE_LENGTH];
     char cpr[13];
     int found = 0;
 
-
-
+    // Search for patient
     patient return_patient = search_patient();
 
     char target_cpr[13];
     strcpy(target_cpr, return_patient.CPR);
 
     int cond = 1;
+
+    // While loop for editing patient
     while (cond == 1) {
         int choice;
         printf("\nWhat do you want to edit (1: Name, 2: Age, 3: Sex, 4: Phone number, 5: Zip-code,\n"
                "6: City, 7: Street name, 8: House number, 9: Relative name, 10: Relative phone number,\n"
                "11: Relative email\n"
                "\nTo exit editing mode, input '-1'\n>");
+
+        // While loop for validating user input
         while(1){
             if(scanf(" %d", &choice) == 1){
                 break;
@@ -338,6 +349,8 @@ int edit_patient_info() {
             clear_buffer();
         }
 
+        // Switch case for editing patient
+        // If user input is -1, exit editing mode
         switch (choice) {
             case 1:
                 printf("\nEnter name:\n>");
@@ -459,11 +472,12 @@ int edit_patient_info() {
 
 }
 
-
+// function for creating a referral id
 int ref_id_create() {
 
     char line[BUFFER];
 
+    // Opens file with referrals
     FILE *referrals_documentation = fopen("./database/hosp_ref_inbox_doc.csv", "r");
     if (referrals_documentation == NULL) {
         printf("Error");
@@ -472,13 +486,14 @@ int ref_id_create() {
 
 
     int i = 0;
+    // While loop for finding the last line in the file
     while (fseek(referrals_documentation, i, SEEK_END) == 0) {
         if (fgetc(referrals_documentation) == '\n') {
             break;
         }
         i--;
     }
-
+    // Reads the last line in the file
     if (fgets(line, BUFFER, referrals_documentation) == NULL) {
         printf("Error");
         return 1;
@@ -490,7 +505,7 @@ int ref_id_create() {
     int ref_id;
     sscanf(line, "%d", &ref_id);
 
-
+    // Returns the last id in the file
     return ref_id;
 
 
