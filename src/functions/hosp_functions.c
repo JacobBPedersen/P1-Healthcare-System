@@ -7,6 +7,7 @@ node* recommended_timeslot(nodelist list, int days) {
     int number_of_timeslot = list_counter(list.head);
     int day_count[days];
 
+
     //initializing the counter to zero
     for (int i = 0; i < days; ++i) {
         day_count[i] = 0;
