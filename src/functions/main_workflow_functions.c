@@ -109,7 +109,7 @@ void hosp_main_flow (hosp_person current_hosp) {
                 }
             //exits the program
             case -1:
-                exit = 0; //Evt. i stedet for en exit condition for while, så blot return "log out".
+                exit = 0;
                 break;
             default:
                 printf("Invalid input");
