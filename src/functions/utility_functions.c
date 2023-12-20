@@ -12,9 +12,9 @@ void clear_buffer () {
     // The loop continues until it encounters a newline character '\n' or the end-of-file (EOF) indicator
     // (which would mean there's no more input to read).
     while ((ch = getchar()) != '\n' && ch != EOF);
-
 }
 
+//chomp removes newlines
 void chomp(char *s) {
     while (*s && *s != '\n' && *s != '\r') s++;
     *s = 0;
@@ -144,21 +144,31 @@ int email_validation(char *email) {
  * SEARCH FUNCTIONS *
  ********************/
 
-char *search_first(char *cpr, FILE *file) //Kald funktion search first
+/**
+ * Function to search for the first value in a line in a CSV file.
+ * @param first_value
+ * @param file
+ * @return
+ */
+char *search_first(char *first_value, FILE *file)
 {
     char buffer[BUFFER];
 
     char return_buffer[BUFFER];
+
     char *token;
 
+    //Loops through each line in the file and stores the current line
     while (fgets(buffer, sizeof(buffer), file) != NULL)
     {
         strcpy(return_buffer, buffer);
+        //Tokenizes the line, separating each value by commas
         token = strtok(buffer, ",");
 
-        if (strcmp(token, cpr) == 0)
+        //if the first value matches
+        if (strcmp(token, first_value) == 0)
         {
-
+            //Returns a duplicate of the found first value
             return strdup(return_buffer);
         }
 
