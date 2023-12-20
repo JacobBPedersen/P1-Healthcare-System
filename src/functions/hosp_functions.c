@@ -7,6 +7,7 @@ node* recommended_timeslot(nodelist list, int days) {
     int number_of_timeslot = list_counter(list.head);
     int day_count[days];
 
+
     //initializing the counter to zero
     for (int i = 0; i < days; ++i) {
         day_count[i] = 0;
@@ -146,9 +147,9 @@ void time_node_structure (int days, int ref_id) {
             scanf("%d", &chosen_day);
             printf("\nChoose a timeslot:\n>");
             scanf("%4s", chosen_timeslot);
-            time_update(chosen_day, chosen_timeslot, ref_id);
+            time_update(chosen_day, chosen_timeslot, ref_id, 1);
         } else {
-            time_update(recomded_time_slot->day, recomded_time_slot->time, ref_id);
+            time_update(recomded_time_slot->day, recomded_time_slot->time, ref_id, 1);
         }
 
     }
@@ -192,11 +193,25 @@ void reverse_list(nodelist* list) {
     list->head = prev;
 }
 
+//The following functions uses an output parameter (pointer array), to deliver one of two versions of a string.
+//It is utilized for the time_update function, it is called twice within the function, but the "choice" parameter is either 1 or 0,
+//depending on if the goal is to delete an appointment, or allocate an appointment
+void time_string(char* full_time, char chosen_time[], int ref_id, int choice) {
 
+    if (choice == 1){
+        sprintf(full_time, "%sa", chosen_time);
+    } else {
+        sprintf(full_time, "%so%d", chosen_time,ref_id);
+    }
+}
 
-
-
-int time_update (int chosen_day, char chosen_time[], int ref_id) {
+// Function to update a timetable based on the given day and time.
+// chosen_day: The day to update.
+// chosen_time: The time to be updated.
+// ref_id: Referral ID used in formatting the time.
+// choice: To determine the formatting of the time string.
+// Returns 0 on success, -1 on failure.
+int time_update (int chosen_day, char chosen_time[], int ref_id, int choice) {
     FILE *srcFile = fopen("./database/timetable.csv", "r");
     FILE *destFile = fopen("./database/temp_timetable.csv", "w");
     if (!srcFile || !destFile) {
@@ -206,43 +221,49 @@ int time_update (int chosen_day, char chosen_time[], int ref_id) {
 
     char line[TEST];
     int day;
-    char times[NUM_TIMES][50];  // Array til at holde tidspunkterne
+    char times[NUM_TIMES][50];  // Array to hold time slots.
     int found = 0;
-
+    char full_time[DETAILS_LENGTH];
 
     while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
+        // Remove newline characters from the line.
         chomp(line);
-        sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
+        // Parse the line into day and times.
+        sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]",
                &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
                times[10], times[11], times[12], times[13], times[14]);
-        char full_time[7];
-
         if (day == chosen_day) {
-            sprintf(full_time, "%sa", chosen_time);
+            // Format the time string.
+            time_string(full_time, chosen_time, ref_id, choice);
+            choice = (choice == 1) ? 0: 1;
             for (int i = 0; i < NUM_TIMES; i++) {
                 if (strcmp(times[i], full_time) == 0) {
-                    sprintf(times[i], "%so%d", chosen_time, ref_id);
+                    time_string(full_time, chosen_time, ref_id, choice);
+                    // Update the time in the array, mark as found and reformat the line.
+                    strcpy(times[i], full_time);
                     found = 1;
                     sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
                             times[3], times[4], times[5], times[6], times[7], times[8], times[9],
-                            times[10], times[11], times[12], times[13], times[14]); // Opdaterer linjen
-                    break; // Stopper ved første match.
+                            times[10], times[11], times[12], times[13], times[14]);
+                    break;
                 }
             }
         }
-
+        // Printing the line to the destination file, both if altered or not.
         fprintf(destFile, "%s\n", line);
     }
 
     fclose(srcFile);
     fclose(destFile);
 
+    // Handling the case where the time was not found or already altered.
     if (!found) {
-        printf("Day %d and time %s is not found, or already occupied.\n", chosen_day, chosen_time);
+        printf("Day %d and time %s is not found, or already altered.\n", chosen_day, chosen_time);
         remove("./database/temp_timetable.csv");
         return -1;
     } else {
-        printf("\nAppointment made\n");
+        printf("\nProcedure done\n");
+        // Replace the original file with the "temporary" (destination file).
         remove("./database/timetable.csv");
         rename("./database/temp_timetable.csv", "./database/timetable.csv");
     }
@@ -251,7 +272,10 @@ int time_update (int chosen_day, char chosen_time[], int ref_id) {
 }
 
 
-
+// Function to "process" referrals in inbox and allow user interaction for managing them.
+// ref_returned: Pointer to an integer for tracking if a referral was returned.
+// current_hosp: Struct containing information about the current "hospital user".
+// Returns a referral struct.
 referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
 
     char line[TEST];
@@ -263,22 +287,23 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
         exit(EXIT_FAILURE);
     }
 
+    // Function which counts the number of lines (referrals) in the file.
     int amount_ref = line_count_file(fp);
 
-    // Dynamically allocate memory for referrals
+    // Dynamically allocate memory for the array referrals
     referral *array = (referral*)malloc(amount_ref * sizeof(referral));
     if (array == NULL) {
         fprintf(stderr, "\nMemory allocation failed\n");
         fclose(fp);
         exit(EXIT_FAILURE);
     }
-
+    // Rewinding file pointer to the beginning of the file.
     rewind(fp);
 
-    //referral array[amount_ref+1];
+
     int i = 0;
 
-
+    // Attain each line via fgets and parse each line of the file into the array of structs (referral).
     while(fgets(line, TEST, fp)) {
         sscanf(line, "%d,%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
                      "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
@@ -300,14 +325,12 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
         i++;
     }
 
-
     fclose(fp);
-
 
     *ref_returned = 0;
 
     while(1) {
-
+        // Printing all the referrals. Only crucial information.
         for (int j = 0; j < amount_ref; ++j) {
             printf("\nREFERRAL NO. %d", j+1);
             printf("\nREFERRAL ID: %d\tCPR: %s\tNAME: %s\tCATEGORY %d\tSEVERITY %d\n",
@@ -333,10 +356,12 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
                 sort_ref(array, amount_ref, compare_ref_id);
                 break;
             case 4:
+                // User selecting referral by ID.
                 printf("\nChoose by referral ID:\n>");
                 scanf(" %d", &target_id);
                 for (int j = 0; j < amount_ref; ++j) {
                     if (target_id == array[j].ref_id) {
+                        // Printing selected referral and prompt for action.
                         print_referral(array[j]);
                         printf("\nAccept referral for selected patient (1)\n"
                                "Send back referral (2)\nForward referral (3)\nNo action (-1)\n>");
@@ -349,8 +374,10 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
                         }
 
 
+                        // Initialize referral struct to the selected referral. In order to be able to allocated heap free memory, and still retain specific referral.
                         referral selected_ref = array[j];
 
+                        // Handling the chosen action/mode for the referral.
                         if (ref_mode == 1) {
                             free(array);
                             *ref_returned = 1;
@@ -377,6 +404,7 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
                 printf("\nInvalid input: ID not found\n");
                 break;
             case -1:
+                // Exit loop, also freeing memory, this is also done in other "exit" (return) cases.
                 free(array);
                 return (referral){0};
             default:
@@ -388,9 +416,10 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
 
 
 
-
+// Function to compare two referral "objects" in structs based on diagnosis severity (category and correlated severity).
 int compare_sev (const void *x_ref, const void *y_ref) {
 
+    // Casting void pointers to referral type for comparison.
     referral* x = (referral*)x_ref;
     referral* y = (referral*)y_ref;
 
@@ -403,21 +432,26 @@ int compare_sev (const void *x_ref, const void *y_ref) {
 
 }
 
-
+// Function to compare two referral "objects" in structs based on patient CPR
 int compare_cpr (const void *x_ref, const void *y_ref) {
 
     referral* x = (referral*)x_ref;
     referral* y = (referral*)y_ref;
 
-    // Comparing the cpr.
-    if (x->patient.CPR != y->patient.CPR) {
-        return strcmp(x->patient.CPR, y->patient.CPR); // Utilizing string compare to determine order of CPR.
-    } else {
-        return 0;
-    }
+//    // Comparing the CPR.
+//    if (x->patient.CPR != y->patient.CPR) {
+//        // Utilizing string compare to determine order of CPR according to the lexicographical order
+//        return strcmp(x->patient.CPR, y->patient.CPR);
+//    } else {
+//        // Returns 0 if CPR values are identical.
+//        return 0;
+//    }
+
+    return strcmp(x->patient.CPR, y->patient.CPR);
 
 }
 
+// Function to compare two referral "objects" in structs based on their referral ID.
 int compare_ref_id (const void *x_ref, const void *y_ref) {
 
     referral* x = (referral*)x_ref;
@@ -427,15 +461,16 @@ int compare_ref_id (const void *x_ref, const void *y_ref) {
     if (x->ref_id != y->ref_id) {
         return (int)y->ref_id - (int)x->ref_id; // Type cast to int, to avoid clang-tidy and conversion errors
     } else {
+        // Returns 0 if referral IDs are identical. (which shouldn't occur, since ref_id's are unique)
         return 0;
     }
 
 }
 
-
-
+// Function to sort an array of structs with datatype referral
+// Utilizes a function pointer as parameter for flexibility.
 void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref)) {
-
+    // Calls qsort with the referral list, size of the list, size of each element, and the comparison function.
     qsort(ref_list, size_of_list, sizeof(referral), sort_type);
 
 }
@@ -610,7 +645,7 @@ void reschedule_appointment () {
     scanf(" %s", chosen_time);
     chosen_ref = search_ref();
 
-    time_delete (chosen_day, chosen_time, chosen_ref.ref_id);
+    time_update (chosen_day, chosen_time, chosen_ref.ref_id, 0);
 
     int res_choice;
     printf("\nContinue to reschedule?\n1 - Yes\t2 - No\n>");
@@ -670,7 +705,7 @@ referral search_ref () {
 }
 
 
-
+/*
 int time_delete (int chosen_day, char chosen_time[], int ref_id) {
     FILE *srcFile = fopen("./database/timetable.csv", "r");
     FILE *destFile = fopen("./database/temp_timetable.csv", "w");
@@ -724,3 +759,4 @@ int time_delete (int chosen_day, char chosen_time[], int ref_id) {
 
     return 0;
 }
+*/
