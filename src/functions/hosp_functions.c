@@ -96,7 +96,7 @@ void review_referral(referral ref) {
 }
 
 void time_node_structure (int days, int ref_id) {
-    //accesing the timetable
+    // Accessing the timetable
     FILE *fp = fopen("./database/timetable.csv", "r");
     if (fp == NULL) {
         printf("File not accessed");
@@ -480,9 +480,8 @@ void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void 
 }
 
 
-
+// Function to delete a specific referral from the inbox file based on a target ID (referral ID).
 void delete_from_inbox (int target_id) {
-
 
     char line[BUFFER];
     int ref_id = 0;
@@ -495,32 +494,34 @@ void delete_from_inbox (int target_id) {
         exit(EXIT_FAILURE);
     }
 
+    // Obtain each line from the source file via fgets.
     while(fgets(line, BUFFER, src_file)) {
         sscanf(line, "%d", &ref_id);
+        // If the applicable line's ID is not the target ID, print the line to the destination file
         if (target_id != ref_id) {
             fprintf(dest_file, "%s", line);
         }
     }
 
-    //Overvej fejlkontrol
-
     fclose(src_file);
     fclose(dest_file);
 
+    // Delete the original inbox file (Source file).
     remove("./database/hosp_ref_inbox.csv");
+    // Rename the temporary file (destination file), effectively updating the inbox, deleting the specific referral.
     rename("./database/referrals_send_temp.csv", "./database/hosp_ref_inbox.csv");
-
 
 }
 
 
-
+// Function to forward a "declined" referral to another destination (Hospital for instance).
 void forward_referral (referral declined_ref, hosp_person current_hosp) {
 
     return_ref detail;
     int destination;
 
     printf("\nEnter destination:\n>");
+    // Clearing input buffer
     clear_buffer();
     scanf(" %d", &destination);
 
@@ -532,7 +533,7 @@ void forward_referral (referral declined_ref, hosp_person current_hosp) {
     clear_buffer();
     scanf("%[^\n]", detail.action);
 
-
+    // Opening file in append mode to append the forwarded referral.
     FILE* fp = fopen("./database/ref_forwarded.csv", "a+");
 
     if (fp == NULL) {
@@ -540,10 +541,10 @@ void forward_referral (referral declined_ref, hosp_person current_hosp) {
         exit(EXIT_FAILURE);
     }
 
+    // Printing the referral and "forwarding details" to the file.
     fprintf(fp, "%d,%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-            //Critic
+            //Feedback or critique information
             destination, detail.reason, detail.action,
-            //declined_ref.ref_id,
             //patient
             declined_ref.patient.CPR, declined_ref.patient.name, declined_ref.patient.age, declined_ref.patient.sex,
             declined_ref.patient.phone_num,
@@ -565,7 +566,7 @@ void forward_referral (referral declined_ref, hosp_person current_hosp) {
 
 }
 
-
+// Function to return a "declined" referral "to the clinic/sender".
 void return_referral(referral declined_ref, hosp_person current_hosp) {
 
     return_ref detail;
@@ -578,7 +579,7 @@ void return_referral(referral declined_ref, hosp_person current_hosp) {
     clear_buffer();
     scanf("%[^\n]", detail.action);
 
-
+    // Opening a file in append mode to append the returned referral.
     FILE *fp = fopen("./database/ref_returned.csv", "a+");
 
     if (fp == NULL) {
@@ -586,20 +587,20 @@ void return_referral(referral declined_ref, hosp_person current_hosp) {
         exit(EXIT_FAILURE);
     }
 
+    // Printing the details of the returned referral to the file.
     fprintf(fp, "%s,%s,%s,%s,%d,%c,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-//Critic
+            //Feedback or critique information
             detail.reason, detail.action,
-//declined_ref.ref_id,
-//patient
+            //patient
             declined_ref.patient.CPR, declined_ref.patient.name, declined_ref.patient.age, declined_ref.patient.sex,
             declined_ref.patient.phone_num,
-//address
+            //address
             declined_ref.patient.address.zip_code, declined_ref.patient.address.city,
             declined_ref.patient.address.street_name, declined_ref.patient.address.house_number_etc,
-//relative
+            //relative
             declined_ref.patient.relative.name, declined_ref.patient.relative.phone_num,
             declined_ref.patient.relative.email,
-//referral info
+            //referral info
             declined_ref.ref_dest, declined_ref.diagnosis_cat, declined_ref.diagnosis_sev, declined_ref.diagnosis_desc,
             declined_ref.short_anamnesis, declined_ref.results, declined_ref.res_bact, declined_ref.handicap,
             declined_ref.ref_purpose, declined_ref.language_barrier, declined_ref.language, declined_ref.GP.name,
@@ -611,31 +612,36 @@ void return_referral(referral declined_ref, hosp_person current_hosp) {
 
 }
 
-
+// Function to handle appointment-related tasks. Seeing a referral, rescheduling an appointment or deleting it.
 void handle_appointment () {
 
     referral found_ref;
     int cond = 1;
+    // While loop allowing for ability to continuous handling of appointments.
     while (cond == 1) {
         int mode;
         printf("Select mode\n1 - View referral of appointment\t2 - Reschedule or delete appointment\t-1 - Exit\n>");
         scanf("%d", &mode);
 
         switch (mode) {
+            // Mode 1: Search for and print a referral.
             case 1:
                 found_ref = search_ref();
                 print_referral(found_ref);
                 break;
             case 2:
+                // Mode 2: Delete and or reschedule appointment.
                 reschedule_appointment();
                 break;
             default:
+                // Exit the loop, returning to prior mode select.
                 cond = 0;
         }
     }
 
 }
 
+// Function to reschedule an appointment.
 void reschedule_appointment () {
 
     int chosen_day;
@@ -647,15 +653,19 @@ void reschedule_appointment () {
     scanf("%d", &chosen_day);
     printf("\nEnter the clock of the appointment to be rescheduled:\n>");
     scanf(" %s", chosen_time);
+    // Call function search_ref to retrieve specific referral struct related to the appointment.
     chosen_ref = search_ref();
 
+    // Changing the chosen occupied timeslot for the chosen referral to available.
     time_update (chosen_day, chosen_time, chosen_ref.ref_id, 0);
 
     int res_choice;
+    // Prompt the user to confirm rescheduling and read the input. If no is chosen the appointment is simply left deleted and not rescheduled.
     printf("\nContinue to reschedule?\n1 - Yes\t2 - No\n>");
     scanf("%d", &res_choice);
 
     if (res_choice == 1) {
+        // If reschedule is chosen, the review_referral function carries out the process of scheduling via recommendation or manual chosen timeslot.
         review_referral(chosen_ref);
     } else {
         printf("\nNo rescheduling chosen\n");
@@ -664,27 +674,31 @@ void reschedule_appointment () {
 }
 
 
-
+// Function to search for a specific referral based on its referral ID
+// (using search_first and then segmenting string into struct of referral type).
 referral search_ref () {
 
+    // Buffer to store the target referral ID.
+    char target_id[10];
 
     FILE* fp = fopen("./database/hosp_ref_inbox_doc.csv", "r");
-    char target_id[5];
+
     if (fp == NULL) {
         perror("Error opening file");
         exit(EXIT_FAILURE);
     }
 
-
     printf("Choose a referral ID:\n>");
     scanf("%s", target_id);
 
+    // Calling search_first retrieving applicable referral as a string.
     char* ref_s = search_first(target_id, fp);
 
     fclose(fp);
 
     referral ref;
 
+    // Parsing the found referral string into the referral struct.
     sscanf(ref_s, "%d,%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
                  "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
            &ref.ref_id,
@@ -703,7 +717,7 @@ referral search_ref () {
            ref.ref_purpose, &ref.language_barrier, ref.language, ref.GP.name,
            ref.GP.title, ref.GP.clinic, ref.GP.phone_num);
 
-
+    // Return the found referral
     return ref;
 
 }
