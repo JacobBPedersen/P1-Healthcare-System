@@ -219,7 +219,7 @@ int time_update (int chosen_day, char chosen_time[], int ref_id, int choice) {
         return -1;
     }
 
-    char line[TEST];
+    char line[BUFFER];
     int day;
     char times[NUM_TIMES][50];  // Array to hold time slots.
     int found = 0;
@@ -278,7 +278,7 @@ int time_update (int chosen_day, char chosen_time[], int ref_id, int choice) {
 // Returns a referral struct.
 referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
 
-    char line[TEST];
+    char line[BUFFER];
 
     FILE* fp = fopen("./database/hosp_ref_inbox.csv", "r");
 
@@ -304,7 +304,7 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
     int i = 0;
 
     // Attain each line via fgets and parse each line of the file into the array of structs (referral).
-    while(fgets(line, TEST, fp)) {
+    while(fgets(line, BUFFER, fp)) {
         sscanf(line, "%d,%[^,],%[^,],%d,%c,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,"
                      "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
                &array[i].ref_id,
@@ -480,7 +480,7 @@ void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void 
 void delete_from_inbox (int target_id) {
 
 
-    char line[TEST];
+    char line[BUFFER];
     int ref_id = 0;
 
     FILE* src_file = fopen("./database/hosp_ref_inbox.csv", "r");
@@ -491,7 +491,7 @@ void delete_from_inbox (int target_id) {
         exit(EXIT_FAILURE);
     }
 
-    while(fgets(line, TEST, src_file)) {
+    while(fgets(line, BUFFER, src_file)) {
         sscanf(line, "%d", &ref_id);
         if (target_id != ref_id) {
             fprintf(dest_file, "%s", line);
@@ -703,60 +703,3 @@ referral search_ref () {
     return ref;
 
 }
-
-
-/*
-int time_delete (int chosen_day, char chosen_time[], int ref_id) {
-    FILE *srcFile = fopen("./database/timetable.csv", "r");
-    FILE *destFile = fopen("./database/temp_timetable.csv", "w");
-    if (!srcFile || !destFile) {
-        perror("Error opening files");
-        return -1;
-    }
-
-    char line[TEST];
-    int day;
-    char times[NUM_TIMES][50];  // Array til at holde tidspunkterne
-    int found = 0;
-
-
-    while (fgets(line, MAX_LINE_LENGTH, srcFile)) {
-        chomp(line);
-        sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", //Forsøg at fjerne denne if.
-               &day, times[0], times[1], times[2], times[3], times[4], times[5], times[6], times[7], times[8], times[9],
-               times[10], times[11], times[12], times[13], times[14]);
-        char full_time[DETAILS_LENGTH];
-
-        if (day == chosen_day) {
-            sprintf(full_time, "%so%d", chosen_time, ref_id);
-            for (int i = 0; i < NUM_TIMES; i++) {
-                if (strcmp(times[i], full_time) == 0) {
-                    sprintf(times[i], "%sa", chosen_time);
-                    found = 1;
-                    sprintf(line, "%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", day, times[0], times[1], times[2],
-                            times[3], times[4], times[5], times[6], times[7], times[8], times[9],
-                            times[10], times[11], times[12], times[13], times[14]); // Updating "line".
-                    break; // Stops when encountering first "match"
-                }
-            }
-        }
-
-        fprintf(destFile, "%s\n", line);
-    }
-
-    fclose(srcFile);
-    fclose(destFile);
-
-    if (!found) {
-        printf("Day %d and time %s is not found, or not occupied.\n", chosen_day, chosen_time);
-        remove("./database/temp_timetable.csv");
-        return -1;
-    } else {
-        printf("\nAppointment deleted\n");
-        remove("./database/timetable.csv");
-        rename("./database/temp_timetable.csv", "./database/timetable.csv");
-    }
-
-    return 0;
-}
-*/

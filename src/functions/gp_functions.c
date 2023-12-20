@@ -462,7 +462,7 @@ int edit_patient_info() {
 
 int ref_id_create() {
 
-    char line[TEST];
+    char line[BUFFER];
 
     FILE *referrals_documentation = fopen("./database/hosp_ref_inbox_doc.csv", "r");
     if (referrals_documentation == NULL) {
@@ -479,7 +479,7 @@ int ref_id_create() {
         i--;
     }
 
-    if (fgets(line, TEST, referrals_documentation) == NULL) {
+    if (fgets(line, BUFFER, referrals_documentation) == NULL) {
         printf("Error");
         return 1;
     }
