@@ -19,6 +19,7 @@ node* recommended_timeslot(nodelist list, int days) {
         day_count[temp->day - 1]++;
         temp = temp->next;
     }
+
     //analysing one side to determine which side has most available time slots
     int lower_accumulator = 0;
 
