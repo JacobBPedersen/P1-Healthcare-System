@@ -146,9 +146,9 @@ int email_validation(char *email) {
 
 char *search_first(char *cpr, FILE *file) //Kald funktion search first
 {
-    char buffer[TEST];
+    char buffer[BUFFER];
 
-    char return_buffer[TEST];
+    char return_buffer[BUFFER];
     char *token;
 
     while (fgets(buffer, sizeof(buffer), file) != NULL)
@@ -169,9 +169,9 @@ char *search_first(char *cpr, FILE *file) //Kald funktion search first
 
 int line_count_file(FILE* fp) {
 
-    char line[TEST];
+    char line[BUFFER];
     int amount_ref=0;
-    while(fgets(line, TEST, fp)) {
+    while(fgets(line, BUFFER, fp)) {
         amount_ref++;
     }
 
@@ -186,7 +186,7 @@ int line_count_file(FILE* fp) {
 
 void print_timetable () {
 
-    char line [TEST];
+    char line [BUFFER];
 
     FILE* fp = fopen("./database/timetable.csv", "r");
 
@@ -195,7 +195,7 @@ void print_timetable () {
         exit(EXIT_FAILURE);
     }
 
-    while (fgets(line, TEST, fp)) {
+    while (fgets(line, BUFFER, fp)) {
         printf("%s\n", line);
     }
 

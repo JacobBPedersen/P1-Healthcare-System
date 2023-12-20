@@ -13,9 +13,9 @@
 #define CPR_LENGTH 12
 #define NUMBER_OF_TIMESLOTS 15
 #define MAX_LINE_LENGTH 150
-#define NUM_TIMES 15  // Antallet af tidspunkter i hver linje
-#define TEST 400
-char validator_buffer[100];
+#define NUM_TIMES 15
+#define BUFFER 400
+
 
 
 
@@ -94,8 +94,8 @@ typedef struct referral {
 } referral;
 
 typedef struct return_ref {
-    char reason[TEST];
-    char action[TEST];
+    char reason[BUFFER];
+    char action[BUFFER];
 } return_ref;
 
 
@@ -169,7 +169,6 @@ void return_referral(referral declined_ref, hosp_person current_hosp);
 void forward_referral (referral declined_ref, hosp_person current_hosp);
 void handle_appointment();
 void reschedule_appointment();
-int time_delete (int chosen_day, char chosen_time[], int ref_id);
     // Sorting function prototypes, utilized by referral_inbox:
 void sort_ref (referral* ref_list, int size_of_list, int(*sort_type)(const void *x_ref, const void *y_ref));
 int compare_sev (const void *x_ref, const void *y_ref);
