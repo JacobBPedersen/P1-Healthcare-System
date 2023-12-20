@@ -14,7 +14,7 @@
 #define NUMBER_OF_TIMESLOTS 15
 #define MAX_LINE_LENGTH 150
 #define NUM_TIMES 15
-#define BUFFER 400
+#define BUFFER 2000
 
 
 

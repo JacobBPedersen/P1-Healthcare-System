@@ -7,7 +7,7 @@ CPR,name,age,sex,phone_number,zip-code,city,street_name,house_number,rel_name,re
 787878-7878,Jens Petersen,45,m,+4513131313,8000,Husum,husumvej,14,jane,+451231331,jane@test.com
 181818-1818,Joergen,46,m,+4560606060,7900,Nykoebing,Fruevej,13 tv.,Marinella,+4570707070,Mari@gmail.com
 160402-5673,Mads Thomsen,21,m,+4521231232,9400,Noerresundby,Vestergade,78A,Daniel Markussen,+4570707070,dani@gmail.com
-530890-7890,Lise Jensen,35,f,+4512345678,9000,Aalborg,Algade,42B,Morten Larsen,+4580808080,morten@gmail.com
+530890-7890,Lisa,56,f,+4512345678,9000,Aalborg,Algade,42B,Morten Larsen,+4580808080,morten@gmail.com
 310677-1234,Anders Nielsen,28,m,+4533333333,9200,Aalborg,Søndergade,15C,Anna Kristensen,+4590909090,anna@gmail.com
 090809-5678,Line Pedersen,29,f,+4544444444,9500,Hobro,Hovedgade,22D,Thomas Rasmussen,+4560606060,thomas@gmail.com
 829012-9876,Michael Andersen,42,m,+4555555555,9800,Hjørring,Jernbanegade,11E,Sofie Christensen,+4511111111,sofie@gmail.com
@@ -28,3 +28,4 @@ CPR,name,age,sex,phone_number,zip-code,city,street_name,house_number,rel_name,re
 719634-6789,Louise Larsen,27,f,+4545678901,9500,Hobro,Holstebrovej,16B,Christian Nielsen,+4578901234,christian@gmail.com
 465802-1236,Anders Madsen,29,m,+4590123456,9800,Hjørring,Jernbanegade,25E,Sara Rasmussen,+4545678901,sara@gmail.com
 892317-4568,Sofie Rasmussen,30,f,+4545678901,9700,Brønderslev,Sct. Knuds Gade,8C,Jonas Kristensen,+4512345678,jonas@gmail.com
+131231-1312,Thomas Langmark,78,m,+4512121212,7900,Nykoebing,Fruevej,19,Karen Husskov,+4590909090,karen@gmail.com

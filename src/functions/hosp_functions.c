@@ -66,7 +66,7 @@ int list_counter(node* current){
 
 void review_referral(referral ref) {
 
-    printf("\nDo you wish to schedule a timeslot for the patient? (Yes: 1, No: 0)\n"); //access all referrals - sort either through prioritization or chronologically
+    printf("\nDo you wish to schedule a timeslot for the patient? (Yes: 1, No: 0)\n>"); //access all referrals - sort either through prioritization or chronologically
     char choice = ' ';
     while (1) {
         scanf(" %c", &choice);
@@ -137,7 +137,7 @@ void time_node_structure (int days, int ref_id) {
         printf("\nRecommended timeslot is: Day %d - Time: %s\n", recomded_time_slot->day, recomded_time_slot->time);
         int chosen_day;
         char chosen_timeslot[5];
-        printf("If you wish to manually schedule a timeslot press 1, else if you wish to schedule the recommended time press 2\n");
+        printf("If you wish to manually schedule a timeslot press 1, else if you wish to schedule the recommended time press 2:\n>");
         while (1) {
             scanf(" %c", &choice);
             if (choice == '1' || choice == '2') {
@@ -264,7 +264,7 @@ int time_update (int chosen_day, char chosen_time[], int ref_id, int choice) {
     if (!found) {
         printf("Day %d and time %s is not found, or already altered.\n", chosen_day, chosen_time);
         remove("./database/temp_timetable.csv");
-        return -1;
+        exit(EXIT_FAILURE);
     } else {
         printf("\nProcedure done\n");
         // Replace the original file with the "temporary" (destination file).
@@ -442,15 +442,7 @@ int compare_cpr (const void *x_ref, const void *y_ref) {
     referral* x = (referral*)x_ref;
     referral* y = (referral*)y_ref;
 
-//    // Comparing the CPR.
-//    if (x->patient.CPR != y->patient.CPR) {
-//        // Utilizing string compare to determine order of CPR according to the lexicographical order
-//        return strcmp(x->patient.CPR, y->patient.CPR);
-//    } else {
-//        // Returns 0 if CPR values are identical.
-//        return 0;
-//    }
-
+    // Utilizing string compare to determine order of CPR according to the lexicographical order
     return strcmp(x->patient.CPR, y->patient.CPR);
 
 }
@@ -462,12 +454,7 @@ int compare_ref_id (const void *x_ref, const void *y_ref) {
     referral* y = (referral*)y_ref;
 
     // Comparing the ref id.
-    if (x->ref_id != y->ref_id) {
-        return (int)y->ref_id - (int)x->ref_id; // Type cast to int, to avoid clang-tidy and conversion errors
-    } else {
-        // Returns 0 if referral IDs are identical. (which shouldn't occur, since ref_id's are unique)
-        return 0;
-    }
+    return (int)x->ref_id - (int)y->ref_id; // Type cast to int, to avoid clang-tidy and conversion errors
 
 }
 
@@ -661,7 +648,7 @@ void reschedule_appointment () {
 
     int res_choice;
     // Prompt the user to confirm rescheduling and read the input. If no is chosen the appointment is simply left deleted and not rescheduled.
-    printf("\nContinue to reschedule?\n1 - Yes\t2 - No\n>");
+    printf("\nAppointment deleted. Continue to reschedule?\n1 - Yes\t2 - No\n>");
     scanf("%d", &res_choice);
 
     if (res_choice == 1) {

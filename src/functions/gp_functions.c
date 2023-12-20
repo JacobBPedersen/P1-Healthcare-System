@@ -335,7 +335,7 @@ int edit_patient_info() {
     // While loop for editing patient
     while (cond == 1) {
         int choice;
-        printf("\nWhat do you want to edit (1: Name, 2: Age, 3: Sex, 4: Phone number, 5: Zip-code,\n"
+        printf("\nWhat do you want to edit 1: Name, 2: Age, 3: Sex, 4: Phone number, 5: Zip-code,\n"
                "6: City, 7: Street name, 8: House number, 9: Relative name, 10: Relative phone number,\n"
                "11: Relative email\n"
                "\nTo exit editing mode, input '-1'\n>");
