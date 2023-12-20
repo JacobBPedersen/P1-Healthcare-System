@@ -129,7 +129,7 @@ hosp_person hosp_user ();
 
 /// Utility function prototypes:
     // Search functions:
-char *search_first(char *cpr, FILE *file);
+char *search_first(char *first_value, FILE *file);
 int line_count_file(FILE* fp);
 referral search_ref ();
 void print_timetable ();
