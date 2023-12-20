@@ -124,6 +124,10 @@ void time_node_structure (int days, int ref_id) {
             }
         }
     }
+    if (free_timeslots.head == NULL) {
+        printf("No free timeslots");
+        exit(EXIT_FAILURE);
+    }
     fclose(fp);
     //printing the free timeslots for user interface
     print_node(&free_timeslots);
