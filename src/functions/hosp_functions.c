@@ -158,6 +158,7 @@ void time_node_structure (int days, int ref_id) {
 
     }
 
+    free_nodelist(&free_timeslots); // Added after submission
 
 }
 
@@ -345,6 +346,7 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
         int target_id;
         int sort_choice;
         int ref_mode;
+        int choice = 0; // Added after submission
         printf("\nDo you want to sort referrals?\n1 - Severity\t2 - CPR\t3 - Chronologically (ref ID)\t-1 - Exit"
                "\nDo you want to choose a referral? \nPress 4\n>");
         scanf("%d", &sort_choice);
@@ -400,13 +402,16 @@ referral referral_inbox(int* ref_returned, hosp_person current_hosp) {
                             return (referral){0};
                         }
                         else {
-                            printf("\nInvalid input\n");
-                            continue;
+                            choice = 1; // Added after submission
+                            break; // Changed from continue to break after submission
                         }
                     }
                 }
-                printf("\nInvalid input: ID not found\n");
+                if(choice != 1) { // Added after submission
+                    printf("\nInvalid input: ID not found\n"); // Added after submission
+                }
                 break;
+
             case -1:
                 // Exit loop, also freeing memory, this is also done in other "exit" (return) cases.
                 free(array);
@@ -704,6 +709,7 @@ referral search_ref () {
            ref.ref_purpose, &ref.language_barrier, ref.language, ref.GP.name,
            ref.GP.title, ref.GP.clinic, ref.GP.phone_num);
 
+    free(ref_s); // Added after submission
     // Return the found referral
     return ref;
 

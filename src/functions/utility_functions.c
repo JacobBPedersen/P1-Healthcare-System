@@ -16,7 +16,9 @@ void clear_buffer () {
 
 //chomp removes newlines
 void chomp(char *s) {
-    while (*s && *s != '\n' && *s != '\r') s++;
+    while (*s && *s != '\n' && *s != '\r') {
+        s++; // Edited layout after submission
+    }
     *s = 0;
 }
 
@@ -292,6 +294,22 @@ void print_node(nodelist* list) {
     //restoring the node structure to the initial form
     reverse_list(list);
 }
+
+
+void free_nodelist(nodelist* list) { //Added after submission
+    node* temp = list->head;
+    while (temp != NULL){
+        node* next = temp->next;
+        free(temp);
+        temp = next;
+    }
+
+    list->head = NULL;
+}
+
+
+
+
 
 void print_user_gp (struct GP user) {
 

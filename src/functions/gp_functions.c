@@ -93,6 +93,11 @@ void create_referral(patient chosen_patient, GP current_gp) {
 
     new_referral.ref_id = ref_id_create()+1;
 
+    if (new_referral.ref_id == 0) { // Added after submission
+        perror("Error");            // Added after submission
+        exit(EXIT_FAILURE);         // Added after submission
+    }
+
     // The following is an inbox for sent referrals. Intended to be a storage for the hospital.
     FILE *referrals_send = fopen("./database/hosp_ref_inbox.csv", "a+");
     if (referrals_send == NULL) {
@@ -154,8 +159,8 @@ patient search_patient() {
     FILE *fp = fopen("./database/gp_patient_register.csv", "r");
 
     if(fp == NULL){
-
         printf("Error");
+        exit(EXIT_FAILURE); // Added after submission
     }
 
     char cpr[CPR_LENGTH];
@@ -199,6 +204,7 @@ patient search_patient() {
             // If user want to create a patient
             if (user_choice == '1'){
                 // Create patient function
+                free(searched_patient); // Added after submission
                 return create_patient(cpr);
             }else if(user_choice == '0') {
                 printf("EXIT PROGRAM");
@@ -219,7 +225,7 @@ patient search_patient() {
            return_patient.address.street_name, return_patient.address.house_number_etc,
            return_patient.relative.name, return_patient.relative.phone_num, return_patient.relative.email);
 
-
+    free(searched_patient); // Added after submission
     return return_patient;
 
 
@@ -354,7 +360,7 @@ int edit_patient_info() {
         switch (choice) {
             case 1:
                 printf("\nEnter name:\n>");
-                scanf(" %s", return_patient.name);
+                scanf(" %[^\n]", return_patient.name); // Added %[^\n] after submission
                 break;
             case 2:
                 printf("\nEnter age:\n>");
@@ -379,36 +385,36 @@ int edit_patient_info() {
                 break;
             case 4:
                 printf("\nEnter phone number:\n>");
-                scanf(" %s", return_patient.phone_num);
+                scanf(" %[^\n]", return_patient.phone_num); // Added %[^\n] after submission
                 break;
             case 5:
                 printf("\nEnter zip code:\n>");
-                scanf(" %s", return_patient.address.zip_code);
+                scanf(" %[^\n]", return_patient.address.zip_code); // Added %[^\n] after submission
                 break;
             case 6:
                 printf("\nEnter city:\n>");
-                scanf(" %s", return_patient.address.city);
+                scanf(" %[^\n]", return_patient.address.city); // Added %[^\n] after submission
                 break;
             case 7:
                 printf("\nEnter street name:\n>");
-                scanf(" %s", return_patient.address.street_name);
+                scanf(" %[^\n]", return_patient.address.street_name); // Added %[^\n] after submission
                 break;
             case 8:
                 printf("\nEnter house number etc:\n>");
-                scanf(" %s", return_patient.address.house_number_etc);
+                scanf(" %[^\n]", return_patient.address.house_number_etc); // Added %[^\n] after submission
                 break;
             case 9:
                 printf("\nEnter name of relative:\n>");
-                scanf(" %s", return_patient.relative.name);
+                scanf(" %[^\n]", return_patient.relative.name); // Added %[^\n] after submission
                 break;
             case 10:
                 printf("\nEnter phone number of relative:\n>");
-                scanf(" %s", return_patient.relative.phone_num);
+                scanf(" %[^\n]", return_patient.relative.phone_num); // Added %[^\n] after submission
                 break;
             case 11:
                 printf("\nEnter email of relative:\n>");
                 while(1){
-                    scanf(" %s", return_patient.relative.email);
+                    scanf(" %[^\n]", return_patient.relative.email); // Added %[^\n] after submission
                     if (email_validation(return_patient.relative.email) == 1){
                         break;
                     }
@@ -496,7 +502,7 @@ int ref_id_create() {
     // Reads the last line in the file
     if (fgets(line, BUFFER, referrals_documentation) == NULL) {
         printf("Error");
-        return 1;
+        return -1; // Added (-1) after submission
     }
 
     fclose(referrals_documentation);

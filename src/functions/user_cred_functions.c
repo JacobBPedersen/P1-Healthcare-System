@@ -43,8 +43,10 @@ GP GP_user(){
             GP current_gp;
             sscanf(GP_info, "%[^,],%[^,],%[^,],%[^,],%[^\n]", current_gp.id, current_gp.name, current_gp.title,
                    current_gp.clinic, current_gp.phone_num);
+            free(GP_info); // Added after submission
             return current_gp;
         }
+        free(GP_info); // Added after submission
     } while (1);
 
 }
@@ -74,11 +76,15 @@ hosp_person hosp_user (){
         // If user not found, print error
         if (strcmp(hosp_info, "Value not found") == 0) {
             printf("\nError user not found.\n");
+            free(hosp_info); // Added after submission
         } else {
             // If user found, store user details in struct
             hosp_person current_hosp;
             sscanf(hosp_info, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", current_hosp.id, current_hosp.name,
                    current_hosp.title, current_hosp.location, current_hosp.department, current_hosp.phone_num);
+
+            free(hosp_info); // Added after submission
+
             return current_hosp;
         }
 

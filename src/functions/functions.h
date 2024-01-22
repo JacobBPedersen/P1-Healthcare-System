@@ -146,6 +146,8 @@ int cpr_validator(char cpr[CPR_LENGTH]);
 int int_validation(char *input);
 int binary_validation(int is_num_validation, char * input);
 int email_validation(char *input);
+    //Freeing individual node's memory from heap:
+void free_nodelist(nodelist* list); // Added after submission
 
 /// GP function prototypes:
 void create_referral(patient chosen_patient, GP current_gp);
