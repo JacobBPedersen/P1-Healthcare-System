@@ -46,7 +46,7 @@ GP GP_user(){
             free(GP_info); // Added after submission
             return current_gp;
         }
-        free(GP_info); // Added after submission
+
     } while (1);
 
 }
@@ -76,7 +76,6 @@ hosp_person hosp_user (){
         // If user not found, print error
         if (strcmp(hosp_info, "Value not found") == 0) {
             printf("\nError user not found.\n");
-            free(hosp_info); // Added after submission
         } else {
             // If user found, store user details in struct
             hosp_person current_hosp;

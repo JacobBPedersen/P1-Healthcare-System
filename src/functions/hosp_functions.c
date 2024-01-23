@@ -686,6 +686,11 @@ referral search_ref () {
     // Calling search_first retrieving applicable referral as a string.
     char* ref_s = search_first(target_id, fp);
 
+    if (strcmp(ref_s, "Value not found") == 0) {  // Added after submission
+        printf("Referral was not found - EXIT PROGRAM");
+        exit(EXIT_FAILURE);
+    }
+
     fclose(fp);
 
     referral ref;

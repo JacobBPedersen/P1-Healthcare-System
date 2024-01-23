@@ -157,7 +157,7 @@ char *search_first(char *first_value, FILE *file)
     char buffer[BUFFER];
 
     char return_buffer[BUFFER];
-
+    
     char *token;
 
     //Loops through each line in the file and stores the current line

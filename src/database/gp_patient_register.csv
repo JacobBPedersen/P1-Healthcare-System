@@ -29,3 +29,6 @@ CPR,name,age,sex,phone_number,zip-code,city,street_name,house_number,rel_name,re
 465802-1236,Anders Madsen,29,m,+4590123456,9800,Hjørring,Jernbanegade,25E,Sara Rasmussen,+4545678901,sara@gmail.com
 892317-4568,Sofie Rasmussen,30,f,+4545678901,9700,Brønderslev,Sct. Knuds Gade,8C,Jonas Kristensen,+4512345678,jonas@gmail.com
 131231-1312,Thomas Langmark,78,m,+4512121212,7900,Nykoebing,Fruevej,19,Karen Husskov,+4590909090,karen@gmail.com
+123456-3333,Thomas Nielsen,45,m,+4530303030,7900,Nykoebing,Fruevej,13,Johanne Thomsen,+4590909090,Johanne@gmail.com
+123456-2323,Thomas Madsen,45,m,+4590909090,7900,Nykoebing,Fruevej,13,Johanne Scmidt,+4590123123,Joh@gmail.com
+987765-8989,Thom tom,45,m,+459012312,9000,Aalborg,Vestergade,123,Tom Nielsen,+4589898989,Tom@gmail.com

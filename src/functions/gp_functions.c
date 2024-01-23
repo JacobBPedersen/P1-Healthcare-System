@@ -204,7 +204,6 @@ patient search_patient() {
             // If user want to create a patient
             if (user_choice == '1'){
                 // Create patient function
-                free(searched_patient); // Added after submission
                 return create_patient(cpr);
             }else if(user_choice == '0') {
                 printf("EXIT PROGRAM");
@@ -320,6 +319,7 @@ patient create_patient(char* cpr) {
             new_patient.relative.email);
 
 
+    fclose(pat_reg); // Added after submission
     return new_patient;
 }
 
